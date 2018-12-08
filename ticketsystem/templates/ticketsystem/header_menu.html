@@ -1,0 +1,30 @@
+{% load static %}
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'dashboard' %}">
+                    <img src="{% static "ticketsystem/privacy-score-plain.svg" %}">
+                </a>
+                <h1><a href="{% url 'dashboard' %}">PrivacyScore &nbsp;<span style="color:silver; font-weight:700">disclosure</span></a>
+
+                </h1>
+            </div>
+            <div class="navbar-collapse collapse navbar-right">
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    <li><a href="{% url 'open_issues' %}">Open Issues</a></li>
+                    <li><a href="{% url 'closed_issues' %}">Closed Issues</a></li>
+                    <li><a href="{% url 'statistics' %}">Statistics</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+<div class="navbar-pad"></div>

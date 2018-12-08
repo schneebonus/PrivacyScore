@@ -31,12 +31,13 @@
                 <a class="navbar-brand" href="{% url 'frontend:index' %}">
                     <img src="{% static 'frontend/img/privacy-score-plain.svg' %}">
                 </a>
-                <h1><a href="{% url 'frontend:index' %}">PrivacyScore &nbsp;<span style="color:silver; font-weight:700">BETA</span></a>
-                    
+                <h1><a href="{% url 'frontend:index' %}">PrivacyScore &nbsp;<span style="color:silver; font-weight:700">TEST</span></a>
+
                 </h1>
             </div>
             <div class="navbar-collapse collapse navbar-right">
                 <ul class="nav navbar-nav">
+                    <li><a href="{% url 'dashboard' %}">Disclosure</a></li>
                     <li><a href="{% url 'frontend:browse' %}">Lists</a></li>
                     <li><a href="{% url 'frontend:code' %}">Code</a></li>
                     <li><a href="{% url 'frontend:team' %}">Team</a></li>
@@ -68,10 +69,10 @@
     {% endblock fullcontent %}
 
     {% block footer %}
-    
+
     <div style="height:110px" class="visible-xs"><!-- more space before the footer needed --></div>
     <div style="height:110px" class="visible-xs visible-sm"><!-- more space before the footer needed --></div>
-    
+
     <div class="footer">
 
     {% if "/site/" in request.path %}
@@ -79,7 +80,7 @@
     {% elif "/list/" in request.path %}
     <div class="text-center">{% trans "All times are shown in UTC (GMT+0)." %}</div>
     {% endif %}
-    
+
         <div class="container">
             <div class="row">
                 <div class="col-sm-4">
@@ -117,7 +118,7 @@
                 <div class="col-xs-4 text-center">
                     <a href="https://twitter.com/privascore"><i class="fa fa-lg fa-twitter" style="color:white"></i></a> &nbsp; <a href="mailto:privacyscore@mailhost.informatik.uni-hamburg.de"><i class="fa fa-lg fa-envelope" style="color:white"></i></a><br />
                 </div>
-                
+
                 <div class="col-xs-4 text-right">
                     <p style="font-size:90%;">
                         <a style="color: #ddd" href="{% url 'frontend:privacypolicy' %}">

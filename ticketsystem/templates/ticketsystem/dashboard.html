@@ -1,0 +1,31 @@
+{% extends 'ticketsystem/layout.html' %}
+
+{% block content %}
+<p class="disclaimer-short">
+The dashboard summarizes all issues that are waiting for a human interaction.
+</p>
+<div class="row">
+        <div class="col-xs-12 col-md-3 flex-last pull-right text-left">
+          <h4>Daily notification</h4>
+          E-mail addresses that have been entered for daily notification receive a summary of pending events each morning.<br><br>
+          <input type="email" id="email" name="email" class="form-control" placeholder="E-Mail Address"><br>
+          <a href="#" class="btn btn-primary btn-block">Subscribe</a>
+          <a href="#" class="btn btn-primary btn-block">Unsubscribe</a>
+        </div>
+        <div class="col-xs-12 col-md-8">
+          <h3>Waiting for notification</h3>
+          <p class="disclaimer-short">
+          A table of issues waiting for confirmation before shipping. <br>
+          These issues were automatically created after a scan.
+          </p>
+          {% include "ticketsystem/notification_table.html" %}
+
+          <h3>Unanswered emails</h3>
+          <p class="disclaimer-short">
+          A table of incoming emails, which, if possible, will be assigned to an issue. <br>
+          These emails have not yet been answered and require a human interaction.
+          </p>
+          {% include "ticketsystem/email_table.html" %}
+      </div>
+</div>
+{% endblock %}

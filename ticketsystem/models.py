@@ -1,0 +1,43 @@
+from django.db import models
+from datetime import datetime
+from enum import Enum
+
+
+class State(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    def __str__(self):
+        return self.title
+
+class ProblemClass(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    def __str__(self):
+        return self.title
+
+class Issue(models.Model):
+    id = models.CharField(max_length=36, primary_key=True)
+    url = models.CharField(max_length=100)
+    problem_class = models.ForeignKey(ProblemClass, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.url + ":"+self.problem_class.title
+
+class HistoryElement(models.Model):
+    date = models.DateTimeField(
+        default=datetime.now, blank=True)
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    def __str__(self):
+        return str(self.state) + " for " + str(self.issue)
+
+class Mail(models.Model):
+    title = models.CharField(max_length=200)
+    sender = models.CharField(max_length=200)
+    receiver = models.CharField(max_length=200)
+    body = models.TextField()
+    answered = models.BooleanField(default=False)
+    received_at = models.DateTimeField(default=datetime.now, blank=True)
+    url = models.CharField(max_length=200)
+
+    def __str__(self):
+        return "%s: %s" % (self.sender, self.title)

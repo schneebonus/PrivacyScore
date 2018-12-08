@@ -1,0 +1,20 @@
+{% extends 'ticketsystem/layout.html' %}
+
+{% block content %}
+<div class="row">
+        <div class="col-sm-12 col-md-8">
+            <div class="spacer"></div>
+            <form method="get" action="#">
+                <div class="input-group">
+                    <input type="text" id="search" name="search" class="form-control" placeholder="Search for URL or email address">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default btn-scan" type="submit">Search</button>
+                    </span>
+                </div>
+            </form>
+            <br><br>
+            {% include "ticketsystem/issue_table.html" %}
+        </div>
+    </div>
+
+{% endblock %}

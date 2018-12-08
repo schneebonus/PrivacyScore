@@ -1,0 +1,19 @@
+[
+{"model": "ticketsystem.state", "pk": 1, "fields": {"title": "Issue Created", "description": "A scanner found a vulnerability.\r\nThis issue was created automatically."}},
+{"model": "ticketsystem.state", "pk": 2, "fields": {"title": "Provider contacted", "description": "A notification has been send to the provider."}},
+{"model": "ticketsystem.state", "pk": 3, "fields": {"title": "Answer received", "description": "An incoming mail has been sorted to this issue."}},
+{"model": "ticketsystem.state", "pk": 4, "fields": {"title": "Postponed", "description": "There are reasons that prevent the publication of this problem."}},
+{"model": "ticketsystem.state", "pk": 5, "fields": {"title": "Fixed", "description": "The problem has been fixed."}},
+{"model": "ticketsystem.problemclass", "pk": 1, "fields": {"title": "Information Leak", "description": "Site leaks information."}},
+{"model": "ticketsystem.problemclass", "pk": 2, "fields": {"title": "Heartbleed", "description": "Site is vulnerable to the heartbleed attack."}},
+{"model": "ticketsystem.problemclass", "pk": 3, "fields": {"title": "Missing transport encryption", "description": "Site does not encrypt data."}},
+{"model": "ticketsystem.issue", "pk": "2ebb63e9-718a-45bd-b6a6-95efe69d187c", "fields": {"url": "suunto.com", "problem_class": 3}},
+{"model": "ticketsystem.issue", "pk": "aa8fce5c-bd5a-4d2a-8b2d-2a63a3d761a6", "fields": {"url": "f5w.de", "problem_class": 2}},
+{"model": "ticketsystem.issue", "pk": "be29251a-4180-4672-8db4-5f39ad75b409", "fields": {"url": "suunto.com", "problem_class": 1}},
+{"model": "ticketsystem.historyelement", "pk": 1, "fields": {"date": "2018-12-08T12:16:48Z", "state": 1, "issue": "be29251a-4180-4672-8db4-5f39ad75b409"}},
+{"model": "ticketsystem.historyelement", "pk": 2, "fields": {"date": "2018-12-08T12:18:21Z", "state": 1, "issue": "aa8fce5c-bd5a-4d2a-8b2d-2a63a3d761a6"}},
+{"model": "ticketsystem.historyelement", "pk": 3, "fields": {"date": "2018-12-08T12:18:29Z", "state": 2, "issue": "be29251a-4180-4672-8db4-5f39ad75b409"}},
+{"model": "ticketsystem.historyelement", "pk": 4, "fields": {"date": "2018-12-08T14:10:23Z", "state": 1, "issue": "2ebb63e9-718a-45bd-b6a6-95efe69d187c"}},
+{"model": "ticketsystem.historyelement", "pk": 5, "fields": {"date": "2018-12-08T14:21:59Z", "state": 2, "issue": "2ebb63e9-718a-45bd-b6a6-95efe69d187c"}},
+{"model": "ticketsystem.mail", "pk": 1, "fields": {"title": "Schwachstellen auf Ihrer Webseite suunto.org (Ticket-ID: be29251a-4180-4672-8db4-5f39ad75b409)", "sender": "notify@privacyscore.org", "receiver": "info@suunto.com", "body": "Sehr geehrte Damen und Herren,\r\nLorem Ipsum Einleitung sit dolor....\r\nEs handelt sich um folgende Adresse:\r\n\r\n* suunto.com/info.php\r\n\r\n\u00dcber diese Adresse lassen sich Informationen \u00fcber verwendete Software und deren\r\nVersionen, als auch interne Konfigurationsdetails Ihres Servers abrufen, die aus\r\nSicherheitsgr\u00fcnden nicht \u00f6ffentlich verf\u00fcgbar sein sollten.\r\n\r\nEin Angreifer kann mit Hilfe der Versionsinformationen sehr einfach feststellen,\r\nob veraltete Software mit bekannten Schwachstellen eingesetzt wird. Falls dem so\r\nist, ist es f\u00fcr ihn problemlos m\u00f6glich, diese auszunutzen und im schlimmsten\r\nFall Zugriff auf den Server zu erlangen.\r\n\r\n\r\nIm Sinne der Sicherheit Ihrer Webseite raten wir Ihnen, diese Schwachstelle schnellstm\u00f6glich zu beheben bzw. Selbiges zu veranlassen.\r\n\r\nF\u00fcr Fragen stehe ich sehr gerne zur Verf\u00fcgung.\r\n\r\nMit freundlichen Gr\u00fc\u00dfen", "answered": false, "received_at": "2018-12-08T10:13:24Z", "url": "suunto.com"}}
+]

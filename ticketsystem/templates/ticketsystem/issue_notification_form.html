@@ -1,0 +1,39 @@
+{% extends 'ticketsystem/layout.html' %}
+
+{% block content %}
+<div class="row">
+        <div class="col-xs-12 col-md-3 flex-last pull-right text-left">
+            <input type="submit" value="Send notification" class="btn btn-primary btn-block">
+            <input type="submit" value="Delete issue" class="btn btn-primary btn-block">
+        </div>
+        <div class="col-xs-12 col-md-8">
+            <h3>Problem</h3>
+            A description of the problem. Example:<br>
+            Information leak in <a href="#">suunto.com/info.php</a>
+
+            <h3>Recipient</h3>
+            <p>
+            Please select one or more recipients (suggestions from the crawler):<br>
+            {% for email in issue.possible_addresses %}
+            <label><input type="checkbox" name="receiver" value="{{ email }}"> {{ email }}</label>
+            ( <a href="#">Source</a> )
+            <br>
+            {% endfor %}
+            </p>
+            <p>
+            or define your own address:<br>
+            <input type="email" size=60>
+            </p>
+            <p>
+            <h3>Subject</h3>
+            <input type="text" value="{{ issue.title }}" size=80>
+            </p>
+            <p>
+            <h3>Body</h3>
+            <textarea rows="20" cols="80">
+            {{ issue.description }}
+            </textarea>
+            </p>
+        </div>
+</div>
+{% endblock %}

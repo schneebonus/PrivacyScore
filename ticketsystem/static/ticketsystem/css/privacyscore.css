@@ -1,0 +1,407 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    color: #384452;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    margin-bottom:280px; /* for footer */
+}
+
+h2 {
+    padding-top:15px;
+}
+
+.row-equal-height {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.navbar {
+    min-height: 70px;
+    padding-top: 10px;
+    margin-bottom: 0;
+}
+
+.navbar-default {
+    background-color: rgb(255, 255, 255);
+    border-color: transparent;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+    color: #00b3fe;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #333;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.navbar-default .navbar-nav > li.switch-language {
+    margin-left: 1em;
+}
+
+.navbar-default .navbar-nav > li.switch-language > form > button {
+    padding: 0;
+    height: 50px;
+}
+
+.navbar li a {
+    text-transform: uppercase;
+}
+
+.navbar li.active a {
+    background:transparent !important;
+}
+
+.navbar-brand {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-brand img {
+    max-height: 50px;
+}
+
+
+.navbar h1 {
+    float: left;
+    display: inline;
+    font-family: "Raleway", sans-serif;
+    font-size: 1.4em;
+    font-weight: 900;
+    line-height: 12px;
+    padding-left: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+}
+
+.navbar h1 a, .navbar h1 a:hover, .navbar h1 a:active {
+    color:#333;
+    text-decoration: none;
+}
+
+.navbar-pad {
+    margin-top:70px;
+}
+
+/* start page */
+.well {
+    background:#2c3e50;
+    text-align:center;
+    padding:10px 0 50px 0;
+    color:#fff;
+}
+
+.well h2 {
+    color:#18bc9c;
+    font-size:40px;
+    font-weight:700;
+    font-family: "Raleway", sans-serif;
+}
+
+.btn-well {
+    width:100%;
+    margin:10px 0 15px 0;
+}
+
+.btn-scan {
+    color:#000;
+}
+
+.scan-single {
+    margin:15px 0 0 0;
+}
+
+.scan-separator {
+    color:#ccc;
+}
+
+/*
+ * Spotlights
+ */
+
+.spotlight-container {
+    text-align:center;
+}
+
+.spotlight-container-outer {
+    float: right;
+    position: relative;
+    left: -50%;
+}
+
+.spotlight-container-inner {
+    position: relative;
+    left: 50%;
+}
+
+.spotlight {
+    width:250px;
+    float:left;
+    margin-right:15px;
+    height:350px;
+}
+
+.spotlight-img {
+    position:relative;
+}
+
+.spotlight-img img {
+    width:100%;
+}
+
+.spotlight-bg {
+    position:absolute;
+    bottom:0;
+    background:#000;
+    width:100%;
+    opacity:0.7;
+    padding:10px 5px 10px 5px;
+}
+
+.spotlight-bg-own {
+    /* background:#2c3e50; */
+    background:#337ab7;
+    opacity:0.85;
+}
+
+/* this is an hack to reserve space */
+.spotlight-bg span {
+    visibility: hidden;
+    font-size:18px;
+    font-weight:bold;
+}
+
+a.spotlight-caption {
+    position:absolute;
+    bottom:0;
+    width:100%;
+    color:#fff;
+    font-size:18px;
+    padding:10px 5px 10px 5px;
+    font-weight:bold;
+    display:block;
+    text-decoration:none;
+}
+
+.spotlight-clearfix {
+    height:20px;
+    clear:both;
+}
+
+/*
+ * Footer
+ */
+
+.footer {
+    padding:10px 0 10px 0;
+    background: #384452;
+    color:#ddd;
+    position:absolute;
+    bottom:0;
+    width:100%;
+}
+
+.footer h3 {
+    border-bottom:2px solid #ddd;
+    font-size:18px;
+}
+
+.footer .imprint {
+    text-align:right;
+}
+
+.footer .imprint a {
+    color:#ccc;
+}
+
+
+/*
+ * New scan list
+ */
+
+.group-box {
+    border:3px solid #ccc;
+    padding:30px;
+}
+
+.list-description {
+    width:100%;
+    box-sizing: border-box;
+}
+
+.spacer {
+    height:20px;
+}
+
+.smallnotice {
+    margin-top:5px;
+    margin-left:5px;
+    margin-right:5px;
+    font-size:90%;
+}
+
+/*
+ * improvements box 
+ */
+div.improvements {
+    border: solid 1px #F4D35E;
+    display: block;
+    background-color: #FAF0CA;
+    padding: 1.5em 2em;
+    vertical-align: middle;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+}
+
+.improvements h5 {
+    text-align: center;
+    font-family: Raleway, sans-serif;
+    font-weight: bold;
+    color: #474747;
+    letter-spacing: 0.7px;
+}
+
+.improvements hr {
+    width: 100%;
+    border: 0;
+    border-top: 1px solid #474747;
+}
+
+.improvements p {
+    color: #474747;
+}
+
+/*
+ * Ranking Colors
+ */
+
+.color-bad {
+    color: #fcab10;
+}
+
+.color-critical {
+    color: #e02c2c;
+}
+
+.color-mediocre, .color-warning {
+    color: #fcab10;
+}
+
+.color-good, .color-doubleplusgood {
+    color: #44af69;
+}
+
+.color-neutral {
+    color: #aaa;
+}
+
+/*
+ * Ranking
+ */
+
+.category-header {
+    width:70px;
+}
+
+/*
+ * Browse lists
+ */
+
+.browse-list-item {
+    margin-bottom: 1.5em;
+    display:block;
+    list-style-type: none;
+    border: 1px solid #F4D35E;
+    background-color: #FAF0CA;
+    padding: 0.7em 1.5em 1.5em 1.5em;
+}
+
+
+/*
+ * Single site result
+*/
+
+panel-group .panel {
+    border-radius: 0;
+    box-shadow: none;
+    border-color: #EEEEEE;
+}
+
+.panel-default > .panel-heading {
+    padding: 0;
+    border-radius: 0;
+    color: #212121;
+    background-color: #FAFAFA;
+    border-color: #EEEEEE;
+}
+
+.panel-title {
+    font-size: 14px;
+}
+
+.panel-title > a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+}
+
+.more-less {
+    float: right;
+    color: #212121;
+}
+
+.panel-default > .panel-heading + .panel-collapse > .panel-body {
+    border-top-color: #EEEEEE;
+}
+
+.details-list-label {
+    display: inline-block;
+    padding: 0.3em 0.7em;
+    background-color:#eee;
+    color: #777;
+    margin: 0em 0.5em 1em 0.5em;
+    border: 1px solid #ccc;
+}
+
+/*
+ *
+ */
+.label-color-reliable {
+    background-color: #5bc0de;
+}
+
+.label-color-unreliable {
+    background-color: #ff7777;
+}
+
+.label-color-informational {
+    background-color: #999;
+}
+
+.label-color-experimental {
+    background-color: #a0f;
+}
+
+ul.errorlist {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.errorlist li {
+    padding: 0;
+    margin: 0;
+    padding-bottom: 0.5em;
+}
+
+.inline {
+  display: inline !important;
+}
