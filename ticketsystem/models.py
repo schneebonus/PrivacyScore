@@ -22,6 +22,12 @@ class Issue(models.Model):
     def __str__(self):
         return self.url + ":"+self.problem_class.title
 
+class Address(models.Model):
+    address = models.CharField(max_length=100)
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.address
+
 class HistoryElement(models.Model):
     date = models.DateTimeField(
         default=datetime.now, blank=True)

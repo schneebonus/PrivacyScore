@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from ticketsystem.models import Issue
 from ticketsystem.models import State
 from ticketsystem.models import Mail
+from ticketsystem.models import ProblemClass
+from ticketsystem.models import Address
+from ticketsystem.models import HistoryElement
 # Create your views here.
 
 
@@ -27,6 +30,39 @@ def dashboard(request):
             ]
     }
     return render(request, 'ticketsystem/dashboard.html', context)
+
+def inject_testdata_view(request):
+    problemclasses = ProblemClass.objects.all()
+
+    got_request = False
+    if request.method == 'POST':
+        url = request.POST.get('url', "")
+        emails = request.POST.get('emails', "")
+        problemclass = request.POST.get('problemclass', "")
+
+        if url is not "" and emails is not "" and problemclass is not "":
+            got_request = True
+            # create issue
+            pclass = ProblemClass.objects.get(id=problemclass)
+            issue = Issue(url=url, problem_class=pclass)
+            issue.save()
+            # set state
+            state = State.objects.get(id=1)
+            history = HistoryElement(state=state, issue=issue)
+            history.save()
+            # create email addresses
+            for email in emails.split("; "):
+                e = Address(address=email, issue=issue)
+                e.save()
+
+    context = {
+        'subsection': "Create Issue",
+        'got_request': got_request,
+        'classes': [
+            {'id' : clazz.id, 'title': clazz.title} for clazz in problemclasses
+            ]
+    }
+    return render(request, 'ticketsystem/inject_issue.html', context)
 
 def open_issue_list_view(request):
     issues = Issue.objects.all()
