@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 from datetime import datetime
 from enum import Enum
 import uuid
@@ -13,6 +14,7 @@ class State(models.Model):
 class ProblemClass(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
+    email_body = models.TextField()
     def __str__(self):
         return self.title
 
@@ -38,6 +40,8 @@ class HistoryElement(models.Model):
 
 class Mail(models.Model):
     title = models.CharField(max_length=200)
+    direction = models.BooleanField(default=False) # outgoing is True, incoming is False
+    sequence = models.IntegerField(default=0)
     sender = models.CharField(max_length=200)
     receiver = models.CharField(max_length=200)
     body = models.TextField()

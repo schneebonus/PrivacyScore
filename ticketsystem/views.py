@@ -36,6 +36,7 @@ def dashboard(request):
     }
     return render(request, 'ticketsystem/dashboard.html', context)
 
+
 def inject_testdata_view(request):
     problemclasses = ProblemClass.objects.all()
 
@@ -64,10 +65,11 @@ def inject_testdata_view(request):
         'subsection': "Create Issue",
         'got_request': got_request,
         'classes': [
-            {'id' : clazz.id, 'title': clazz.title} for clazz in problemclasses
+            {'id': clazz.id, 'title': clazz.title} for clazz in problemclasses
             ]
     }
     return render(request, 'ticketsystem/inject_issue.html', context)
+
 
 def open_issue_list_view(request):
     search = request.GET.get('search', "")
@@ -90,6 +92,7 @@ def open_issue_list_view(request):
             ],
         }
     return render(request, 'ticketsystem/issue_list_view.html', context)
+
 
 def issue_view(request):
     id = request.GET['id']
@@ -117,6 +120,7 @@ def issue_view(request):
         }
     return render(request, 'ticketsystem/issue_detail_view.html', context)
 
+
 def email_view(request):
     id = request.GET.get('id', 0)
     answered = request.GET.get('answered', "")
@@ -140,13 +144,25 @@ def email_view(request):
         }
     return render(request, 'ticketsystem/email_detail_view.html', context)
 
+
 def closed_issue_list_view(request):
     context = {'subsection': "Closed Issues"}
     return render(request, 'ticketsystem/issue_list_view.html', context)
 
+
 def statistics_view(request):
     context = {'subsection': "Statistics"}
     return render(request, 'ticketsystem/statistics.html', context)
+
+
+def unsorted_emails_view(request):
+    emails = Mail.objects.all().filter(url="")
+
+    context = {
+        'subsection': "Unsorted E-Mails (not linked to any issue)",
+        'emails': emails
+        }
+    return render(request, 'ticketsystem/unsorted_emails.html', context)
 
 def notification_send_view(request):
     receiver = request.POST.getlist('receiver')
@@ -164,7 +180,7 @@ def notification_send_view(request):
 
     # create mail objects for issue / url
     for r in emails:
-        mail = Mail(title=title, sender="PrivacyScore", receiver=r, body=body, url = issue.url)
+        mail = Mail(title=title, direction=True, sender="PrivacyScore", receiver=r, body=body, url = issue.url)
         mail.save()
 
         # ToDo: send email

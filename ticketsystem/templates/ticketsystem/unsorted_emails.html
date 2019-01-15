@@ -1,0 +1,12 @@
+{% extends 'ticketsystem/layout.html' %}
+
+{% block content %}
+
+<ul>
+{% for email in emails %}
+
+<li><a href="{% url 'email' %}?id={{ email.id }}">{{ email.title }}</a></li>
+
+{% endfor %}
+</ul>
+{% endblock %}
