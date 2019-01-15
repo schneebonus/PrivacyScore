@@ -75,7 +75,8 @@ def open_issue_list_view(request):
 
     search_results = []
     for issue in issues:
-        if search in issue.url or search in issue.problem_class.title:
+        state = issue.historyelement_set.all().order_by('-date').first().state.title
+        if search in issue.url or search in issue.problem_class.title or search in state:
             search_results.append(issue)
 
     context = {
