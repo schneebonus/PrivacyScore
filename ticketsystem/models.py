@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from enum import Enum
+import uuid
 
 
 class State(models.Model):
@@ -16,7 +17,6 @@ class ProblemClass(models.Model):
         return self.title
 
 class Issue(models.Model):
-    id = models.CharField(max_length=36, primary_key=True)
     url = models.CharField(max_length=100)
     problem_class = models.ForeignKey(ProblemClass, on_delete=models.CASCADE)
     def __str__(self):
@@ -46,4 +46,4 @@ class Mail(models.Model):
     url = models.CharField(max_length=200)
 
     def __str__(self):
-        return "%s: %s" % (self.sender, self.title)
+        return "%s: %s: %s -> %s" % (self.received_at, self.sender, self.title, self.receiver)

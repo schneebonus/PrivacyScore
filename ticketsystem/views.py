@@ -11,6 +11,7 @@ from ticketsystem.models import HistoryElement
 
 def dashboard(request):
     all_issues = Issue.objects.all()
+
     new_issues = []
     for issue in all_issues:
         if len(issue.historyelement_set.all()) is 1:
@@ -19,9 +20,8 @@ def dashboard(request):
     context = {
         'subsection': "Dashboard",
         'emails': [
-            {'id': '1', 'url': "privacyscore.org", 'date': "2018.12.04"},
-            {'id': '2', 'url': "movescount.org", 'date': "2018.12.02"},
-            ],
+
+        ],
         'notifications': [
             {'id': issue.id,
             'url': issue.url,
@@ -89,7 +89,7 @@ def issue_view(request):
         'status': history_elements.first().state.title,
         'description': issue.problem_class.description + " ToDo: add individual details",
         'emails': [
-            {'id': "?", 'subject': email.title} for email in emails
+            {'id': email.id, 'subject': email.title, 'representation': str(email)} for email in emails
             ],
         'history': [
             {'date': element.date, 'description': element.state.title} for element in history_elements
@@ -106,7 +106,7 @@ def email_view(request):
         'id': "1",
         'sender': "mitarbeiter1@suunto.com",
         'receiver': "notify@privacyscore.org",
-        'subject': "Re: Schwachstellen auf Ihrer Webseite suunto.org (Ticket-ID: 1234567)",
+        'subject': "Re: Schwachstellen auf Ihrer Webseite (url: "+ url +")",
         'content': "Hallo,\nkönnen sie bitte weitere Informationen liefern?\n\nVielen Dank,\nMitarbeiter1",
         }
     return render(request, 'ticketsystem/email_detail_view.html', context)
@@ -119,37 +119,60 @@ def statistics_view(request):
     context = {'subsection': "Statistics"}
     return render(request, 'ticketsystem/statistics.html', context)
 
+def notification_send_view(request):
+    receiver = request.POST.getlist('receiver')
+    title = request.POST.get('title')
+    body = request.POST.get('content')
+    id = request.POST.get('id')
+
+    # update state
+    print(id)
+    issue = Issue.objects.get(id=id)
+    state = State.objects.get(id=2)
+    history = HistoryElement(state=state, issue=issue)
+    history.save()
+
+    # create mail objects for issue / url
+    for r in emails:
+        mail = Mail(title=title, sender="PrivacyScore", receiver=r, body=body, url = issue.url)
+        mail.save()
+
+    # ToDo: send email
+
+    emails = [email for email in receiver if email is not ""]
+    context = {
+        'subsection': "Notification send",
+        'emails': emails,
+        'title': title,
+        'body': body,
+        }
+    return render(request, 'ticketsystem/mail_send.html', context)
+
 def notification_view(request):
-    text = """Sehr geehrte Damen und Herren,
-Lorem Ipsum Einleitung sit dolor....
-Es handelt sich um folgende Adresse:
+    id = request.GET.get('id', 0)
+    if id is 0:
+        pass
+        # todo: send to error page
 
-* suunto.com/info.php
+    text ="""Sehr geehrte Damen und Herren,
 
-Über diese Adresse lassen sich Informationen über verwendete Software und deren
-Versionen, als auch interne Konfigurationsdetails Ihres Servers abrufen, die aus
-Sicherheitsgründen nicht öffentlich verfügbar sein sollten.
+ToDo: echte Texte aus Django Model.
 
-Ein Angreifer kann mit Hilfe der Versionsinformationen sehr einfach feststellen,
-ob veraltete Software mit bekannten Schwachstellen eingesetzt wird. Falls dem so
-ist, ist es für ihn problemlos möglich, diese auszunutzen und im schlimmsten
-Fall Zugriff auf den Server zu erlangen.
+Mit freundlichen Grüßen,
+Das PrivacyScore Team
+"""
 
-
-Im Sinne der Sicherheit Ihrer Webseite raten wir Ihnen, diese Schwachstelle schnellstmöglich zu beheben bzw. Selbiges zu veranlassen.
-
-Für Fragen stehe ich sehr gerne zur Verfügung.
-
-Mit freundlichen Grüßen
-    """
+    issue = Issue.objects.get(id=id)
+    addresses = Address.objects.filter(issue=issue)
 
     context = {
         'subsection': "Notification",
         'issue': {
-            'id': '1',
-            'url': "suunto.org",
-            'title': "Schwachstellen auf Ihrer Webseite suunto.org (Ticket-ID: 1234567)",
-            'possible_addresses': ["privacy-eu@google.com", "info@suunto.org", "support@suunto.com"],
+            'id': issue.id,
+            'url': issue.url,
+            'problemclass': issue.problem_class,
+            'title': "Schwachstellen auf Ihrer Webseite ( " + issue.url + " )",
+            'possible_addresses': [a.address for a in addresses],
             'description': text,
             }
         }

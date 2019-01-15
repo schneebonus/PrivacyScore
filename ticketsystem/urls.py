@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^issue$', views.issue_view, name="issue"),
     url(r'^email$', views.email_view, name="email"),
     url(r'^inject$', views.inject_testdata_view, name="inject"),
+    url(r'^notification_send$', views.notification_send_view, name="send"),
 ]

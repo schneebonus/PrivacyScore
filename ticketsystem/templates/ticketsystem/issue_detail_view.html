@@ -34,14 +34,14 @@
       <br><br>
 
       <h3>Communication</h3>
-      {% if more_issues_for_url|length > 0 %}
+      {% if emails|length > 0 %}
           <ul>
         {% for email in emails %}
-          <li><a href="{% url 'email' %}?id=something">{{ email.subject }}</a></li>
+          <li><a href="{% url 'email' %}?id={{ email.id }}">{{ email.representation }}</a></li>
         {% endfor %}
         </ul>
       {% endif %}
-      {% if more_issues_for_url|length == 0 %}
+      {% if emails|length == 0 %}
         The provider has not yet been informed about the problem.<br>
         The contact email must still be checked and confirmed by a human.<br>
         This process can be done <a href="{% url 'notification' %}?id={{ id }}">here</a>.

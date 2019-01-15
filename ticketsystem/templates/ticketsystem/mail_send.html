@@ -1,0 +1,15 @@
+{% extends 'ticketsystem/layout.html' %}
+
+{% block content %}
+Notification has been send to:
+
+<ul>
+{% for email in emails %}
+  <li>{{ email }}</li>
+{% endfor %}
+</ul>
+
+{{ title }}<br>
+{{ body }}
+
+{% endblock %}
