@@ -2,7 +2,7 @@
   <tr>
     <th>URL</th>
     <th>Status</th>
-    <th>E-Mail</th>
+    <th>Problemclass</th>
     <th>Date of creation</th>
     <th></th>
   </tr>
@@ -10,7 +10,7 @@
   <tr>
     <td>{{ issue.url }}</td>
     <td>{{ issue.status }}</td>
-    <td>{{ issue.email }}</td>
+    <td>{{ issue.problem }}</td>
     <td>{{ issue.creation }}</td>
     <td><a href="{% url 'issue' %}?id={{ issue.id }}">Details</a></td>
   <tr>

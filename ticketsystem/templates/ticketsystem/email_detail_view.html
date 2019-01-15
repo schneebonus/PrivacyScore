@@ -1,11 +1,14 @@
 {% extends 'ticketsystem/layout.html' %}
 
 {% block content %}
+{% if sender != "PrivacyScore" %}
 <div class="col-xs-12 col-md-4 flex-last pull-right text-right">
-    <input type="submit" value="Mark as answered" class="btn btn-primary btn-block">
-    <input type="submit" value="Show issue" class="btn btn-primary btn-block">
-    <input type="submit" value="Delete" class="btn btn-primary btn-block">
+  <form action="#" method="GET">
+    <input type="submit" name="answered" value="Mark as answered" class="btn btn-primary btn-block">
+    <input type="hidden" name="id" value="{{ id }}">
+  </form>
 </div>
+{% endif %}
 <h3>Details</h3>
 <b>Sender:</b><br>{{ sender }}<br>
 <b>Recipient:</b><br>{{ receiver }}<br>
@@ -15,6 +18,5 @@
 {{ content }}
 </textarea>
 <br>
-Attachments: Ja / Nein<br>
 
 {% endblock %}

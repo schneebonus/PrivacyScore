@@ -6,6 +6,11 @@ from ticketsystem.models import Mail
 from ticketsystem.models import ProblemClass
 from ticketsystem.models import Address
 from ticketsystem.models import HistoryElement
+import smtplib
+from django.conf import settings
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 # Create your views here.
 
 
@@ -65,11 +70,23 @@ def inject_testdata_view(request):
     return render(request, 'ticketsystem/inject_issue.html', context)
 
 def open_issue_list_view(request):
+    search = request.GET.get('search', "")
     issues = Issue.objects.all()
+
+    search_results = []
+    for issue in issues:
+        if search in issue.url or search in issue.problem_class.title:
+            search_results.append(issue)
+
     context = {
         'subsection': "Open Issues",
         'issues': [
-            {'id': issue.id, 'url': issue.url, 'status': '?', 'email': '?', 'creation': '?'} for issue in issues
+            {'id': issue.id,
+            'url': issue.url,
+            'status': issue.historyelement_set.all().order_by('-date').first().state.title,
+            'problem': issue.problem_class.title,
+            'creation': issue.historyelement_set.all().order_by('-date').last().date
+            } for issue in search_results
             ],
         }
     return render(request, 'ticketsystem/issue_list_view.html', context)
@@ -87,7 +104,7 @@ def issue_view(request):
         'url': issue.url,
         'publication_date': '?',
         'status': history_elements.first().state.title,
-        'description': issue.problem_class.description + " ToDo: add individual details",
+        'description': issue.problem_class.description,
         'emails': [
             {'id': email.id, 'subject': email.title, 'representation': str(email)} for email in emails
             ],
@@ -101,13 +118,25 @@ def issue_view(request):
     return render(request, 'ticketsystem/issue_detail_view.html', context)
 
 def email_view(request):
+    id = request.GET.get('id', 0)
+    answered = request.GET.get('answered', "")
+    set_answered = answered is "Mark as answered"
+    email = Mail.objects.get(id=id)
+
+    if set_answered:
+        issues = Issue.objects.filter(url=email.url)
+        for issue in issues:
+            state = State.objects.get(id=3)
+            history = HistoryElement(state=state, issue=issue)
+            history.save()
+
     context = {
         'subsection': "E-Mail",
-        'id': "1",
-        'sender': "mitarbeiter1@suunto.com",
-        'receiver': "notify@privacyscore.org",
-        'subject': "Re: Schwachstellen auf Ihrer Webseite (url: "+ url +")",
-        'content': "Hallo,\nkönnen sie bitte weitere Informationen liefern?\n\nVielen Dank,\nMitarbeiter1",
+        'id': email.id,
+        'sender': email.sender,
+        'receiver': email.receiver,
+        'subject': email.title,
+        'content': email.body,
         }
     return render(request, 'ticketsystem/email_detail_view.html', context)
 
@@ -121,6 +150,7 @@ def statistics_view(request):
 
 def notification_send_view(request):
     receiver = request.POST.getlist('receiver')
+    emails = [email for email in receiver if email is not ""]
     title = request.POST.get('title')
     body = request.POST.get('content')
     id = request.POST.get('id')
@@ -137,9 +167,21 @@ def notification_send_view(request):
         mail = Mail(title=title, sender="PrivacyScore", receiver=r, body=body, url = issue.url)
         mail.save()
 
-    # ToDo: send email
+        # ToDo: send email
+        fromaddr = settings.EMAIL_USERNAME
+        toaddr = r
 
-    emails = [email for email in receiver if email is not ""]
+        msg = MIMEMultipart()
+        msg['From'] = fromaddr
+        msg['To'] = toaddr
+        msg['Subject'] = title
+
+        msg.attach(MIMEText(body, 'utf-8'))
+
+        s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
+        s.login(fromaddr, settings.EMAIL_PASSWORD)
+        s.sendmail(fromaddr, toaddr, msg.as_string())
+
     context = {
         'subsection': "Notification send",
         'emails': emails,
