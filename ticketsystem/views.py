@@ -16,7 +16,7 @@ from email.mime.text import MIMEText
 
 def dashboard(request):
     all_issues = Issue.objects.all()
-
+    pending_emails = Mail.objects.all().filter(answered=False)
     new_issues = []
     for issue in all_issues:
         if len(issue.historyelement_set.all()) is 1:
@@ -24,9 +24,7 @@ def dashboard(request):
 
     context = {
         'subsection': "Dashboard",
-        'emails': [
-
-        ],
+        'emails': pending_emails,
         'notifications': [
             {'id': issue.id,
             'url': issue.url,
@@ -97,8 +95,8 @@ def open_issue_list_view(request):
 def issue_view(request):
     id = request.GET['id']
     issue = Issue.objects.get(id=id)
-    emails = Mail.objects.filter(url=issue.url)
-    history_elements = issue.historyelement_set.all().order_by('-date')
+    emails = Mail.objects.filter(url=issue.url).order_by("id")
+    history_elements = issue.historyelement_set.all().order_by('date')
     more_issues_for_url = Issue.objects.filter(url=issue.url).exclude(id=id)
     # ToDo: error handling in case no id given
     context = {
@@ -108,9 +106,7 @@ def issue_view(request):
         'publication_date': '?',
         'status': history_elements.first().state.title,
         'description': issue.problem_class.description,
-        'emails': [
-            {'id': email.id, 'subject': email.title, 'representation': str(email)} for email in emails
-            ],
+        'emails': emails,
         'history': [
             {'date': element.date, 'description': element.state.title} for element in history_elements
             ],
@@ -124,11 +120,15 @@ def issue_view(request):
 def email_view(request):
     id = request.GET.get('id', 0)
     answered = request.GET.get('answered', "")
-    set_answered = answered is "Mark as answered"
+    set_answered = answered is not ""
     email = Mail.objects.get(id=id)
+
+    print(set_answered)
 
     if set_answered:
         issues = Issue.objects.filter(url=email.url)
+        emails = Mail.objects.all().filter(id=id)
+        emails.update(answered=True)
         for issue in issues:
             state = State.objects.get(id=3)
             history = HistoryElement(state=state, issue=issue)
@@ -137,6 +137,7 @@ def email_view(request):
     context = {
         'subsection': "E-Mail",
         'id': email.id,
+        'url': email.url,
         'sender': email.sender,
         'receiver': email.receiver,
         'subject': email.title,
@@ -169,18 +170,24 @@ def notification_send_view(request):
     emails = [email for email in receiver if email is not ""]
     title = request.POST.get('title')
     body = request.POST.get('content')
-    id = request.POST.get('id')
-
+    url = request.POST.get('url', "")
+    answer_to = request.POST.get('answer_to', 0)
     # update state
-    print(id)
-    issue = Issue.objects.get(id=id)
-    state = State.objects.get(id=2)
-    history = HistoryElement(state=state, issue=issue)
-    history.save()
+    if url is not "":
+        issues = Issue.objects.filter(url=url)
+        if answer_to is 0:
+            state = State.objects.get(id=2)
+        else:
+            state = State.objects.get(id=3)
+            email = Mail.objects.all().filter(id=answer_to)
+            email.update(answered=True)
+        for issue in issues:
+            history = HistoryElement(state=state, issue=issue)
+            history.save()
 
     # create mail objects for issue / url
     for r in emails:
-        mail = Mail(title=title, direction=True, sender="PrivacyScore", receiver=r, body=body, url = issue.url)
+        mail = Mail(title=title, answered=True, direction=True, sender="PrivacyScore", receiver=r, body=body, url = url)
         mail.save()
 
         # ToDo: send email
@@ -212,15 +219,8 @@ def notification_view(request):
         pass
         # todo: send to error page
 
-    text ="""Sehr geehrte Damen und Herren,
-
-ToDo: echte Texte aus Django Model.
-
-Mit freundlichen Grüßen,
-Das PrivacyScore Team
-"""
-
     issue = Issue.objects.get(id=id)
+    text = issue.problem_class.email_body
     addresses = Address.objects.filter(issue=issue)
 
     context = {

@@ -2,6 +2,7 @@ from django.db import models
 from django import forms
 from datetime import datetime
 from enum import Enum
+from django.utils.timezone import now
 import uuid
 
 
@@ -46,8 +47,8 @@ class Mail(models.Model):
     receiver = models.CharField(max_length=200)
     body = models.TextField()
     answered = models.BooleanField(default=False)
-    received_at = models.DateTimeField(default=datetime.now, blank=True)
+    received_at = models.DateTimeField(default=now, blank=True)
     url = models.CharField(max_length=200)
 
     def __str__(self):
-        return "%s: %s: %s -> %s" % (self.received_at, self.sender, self.title, self.receiver)
+        return "%s -> %s -> %s" % (self.sender, self.title, self.receiver)

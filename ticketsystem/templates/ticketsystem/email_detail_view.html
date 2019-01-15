@@ -17,6 +17,17 @@
 <textarea disabled rows="15" cols="80">
 {{ content|safe }}
 </textarea>
-<br>
-
+{% if sender != "PrivacyScore" %}
+<br><br>
+<h3>Quick Answer</h3>
+<form action="{% url 'send' %}" method="POST" id="usrform">
+  {% csrf_token %}
+  <input type="hidden" size=60 name="receiver" value="{{ sender }}">
+  <input type="hidden" value="Re: {{ subject }}" name="title">
+  <textarea name="content" form="usrform" rows="15" cols="80"></textarea>
+  <input type="submit" value="Send notification" class="btn btn-primary btn-block">
+  <input type="hidden" name="url" value="{{ url }}">
+  <input type="hidden" name="answer_to" value="{{ id }}"">
+</form>
+{% endif %}
 {% endblock %}

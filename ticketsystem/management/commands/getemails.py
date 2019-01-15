@@ -6,6 +6,9 @@ import email
 import re
 import datetime
 from ticketsystem.models import Mail
+from ticketsystem.models import Issue
+from ticketsystem.models import HistoryElement
+from ticketsystem.models import State
 from django.conf import settings
 import bleach
 
@@ -18,7 +21,6 @@ class Command(BaseCommand):
         M = imaplib.IMAP4_SSL(imap_server, imap_port)
         try:
             M.login(settings.EMAIL_USERNAME, settings.EMAIL_PASSWORD)
-            print("imap login success")
             M.select("INBOX", True)
             tmp, data = M.search(None, 'ALL')
             newest_known_email = Mail.objects.all().order_by('sequence').last()
@@ -40,11 +42,17 @@ class Command(BaseCommand):
                     received_at = msg["Date"]
                     url = ""
 
+                    print(title + " from " + sender)
+
                     regex_url = "^.*Schwachstellen auf Ihrer Webseite \( (.*\..*) \).*$"
                     matchObj = re.match( regex_url, title)
                     if matchObj is not None:
                         url = matchObj.group(1)
-                        print(url)
+                        issues = Issue.objects.all().filter(url=url)
+                        for issue in issues:
+                            state = State.objects.get(id=4)
+                            history = HistoryElement(state=state, issue=issue)
+                            history.save()
 
                     new_mail = Mail(title=title, direction=direction, sequence=sequence, sender=sender, receiver=receiver, body=body, url=url)
                     new_mail.save()

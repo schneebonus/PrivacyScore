@@ -25,7 +25,6 @@
     </div>
     <div class="col-xs-12 col-md-8">
       <h3>Basic-Data</h3>
-      <b>ID:</b><br>{{ id }}<br>
       <b>URL:</b><br><a href="#">{{ url }}</a><br>
       <b>Problem:</b><br>
       {{ description }}<br>
@@ -35,11 +34,7 @@
 
       <h3>Communication</h3>
       {% if emails|length > 0 %}
-          <ul>
-        {% for email in emails %}
-          <li><a href="{% url 'email' %}?id={{ email.id }}">{{ email.representation }}</a></li>
-        {% endfor %}
-        </ul>
+          {% include "ticketsystem/email_table.html" %}
       {% endif %}
       {% if emails|length == 0 %}
         The provider has not yet been informed about the problem.<br>

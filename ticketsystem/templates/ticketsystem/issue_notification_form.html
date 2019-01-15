@@ -27,12 +27,12 @@
             </p>
             <p>
             <h3>Subject</h3>
-            <input type="text" value="{{ issue.title }}" size=80 name="title">
+            <input type="text" value="{{ issue.title }}" size=80 name="title" readonly>
             </p>
             <p>
             <h3>Body</h3>
             <textarea rows="20" cols="80" name="content" form="usrform">{{ issue.description }}</textarea>
-            <input type="hidden" name="id" value="{{ issue.id }}">
+            <input type="hidden" name="url" value="{{ issue.url }}">
             </p>
         </div>
 </div>
