@@ -29,26 +29,27 @@ class Command(BaseCommand):
                 highest_known_email = newest_known_email.sequence
             else:
                 highest_known_email = 0
-
+            highest_known_email = 3 #####
             print("newest_known_email = ", highest_known_email)
             print("Server has: " + str(data[0].split()))
             for num in data[0].split():
                 if int(num) > highest_known_email:
-                    tmp, content = M.fetch(num, '(RFC822)')
-                    body = content[0][1]
+                    tmp, content_raw = M.fetch(num, '(RFC822)')
+                    body_raw = content_raw[0][1]
                     try:
-                        body = body.decode('utf-8')
+                        body = body_raw.decode('utf-8')
                     except UnicodeDecodeError:
-                        body = body.decode('iso-8859-1')
-                    print(body, type(body))
+                        body = body_raw.decode('iso-8859-1')
                     msg = email.message_from_string(body)
                     title = msg["Subject"]
                     direction = False
                     sequence = num
                     sender = msg["From"]
                     receiver = msg["To"]
-                    # body = bleach.clean(msg.get_payload())
-                    body = msg.get_payload()
+                    body = ""
+                    for part in msg.walk():
+                        if part.get_content_type() == "text/plain" or part.get_content_type() == "application/pgp-signature":
+                            body += str(part.get_payload()) + "\n"
                     received_at = msg["Date"]
                     url = ""
 

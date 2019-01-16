@@ -36,6 +36,8 @@ Currently we have """ + str(len(pending_emails)) + """ incoming e-mails waiting 
 
         body += """
 ToDo: n vulnerable results are about to be published in the next 24 hours.
+
+ToDo: unsubscribe link without admin permissions.
 """
 
         if len(pending_emails) > 0:
