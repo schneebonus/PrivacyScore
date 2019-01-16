@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from django.utils.timezone import now
 import uuid
-
+# from datetime import datetime, timedelta
 
 class State(models.Model):
     title = models.CharField(max_length=100)
@@ -27,6 +27,7 @@ class ProblemClass(models.Model):
 class Issue(models.Model):
     url = models.CharField(max_length=100)
     problem_class = models.ForeignKey(ProblemClass, on_delete=models.CASCADE)
+    # publication = models.DateTimeField(default=0, blank=True)
     def __str__(self):
         return self.url + ":"+self.problem_class.title
 

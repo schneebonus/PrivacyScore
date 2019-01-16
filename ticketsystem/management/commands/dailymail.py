@@ -34,23 +34,28 @@ Currently we have """ + str(len(pending_emails)) + """ incoming e-mails waiting 
         for pemail in pending_emails:
             body += "\t" + pemail.title + "\n"
 
-        body += """ToDo: n vulnerable results are about to be published in the next 24 hours.
+        body += """
+ToDo: n vulnerable results are about to be published in the next 24 hours.
 """
 
-        # ToDo: send email
-        fromaddr = settings.EMAIL_USERNAME
+        if len(pending_emails) > 0:
+            print("Sending the mail!")
+            # ToDo: send email
+            fromaddr = settings.EMAIL_USERNAME
 
-        msg = MIMEMultipart()
-        msg['From'] = fromaddr
-        msg['Subject'] = "PrivacyScore: Daily Notification"
+            msg = MIMEMultipart()
+            msg['From'] = fromaddr
+            msg['Subject'] = "PrivacyScore: Daily Notification"
 
-        msg.attach(MIMEText(body, 'utf-8'))
+            msg.attach(MIMEText(body, 'utf-8'))
 
-        s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
-        s.login(fromaddr, settings.EMAIL_PASSWORD)
+            s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
+            s.login(fromaddr, settings.EMAIL_PASSWORD)
 
-        for r in subscribers:
-            toaddr = r
-            msg['To'] = toaddr
-            s.sendmail(fromaddr, toaddr, msg.as_string())
-        s.quit()
+            for r in subscribers:
+                toaddr = r
+                msg['To'] = toaddr
+                s.sendmail(fromaddr, toaddr, msg.as_string())
+            s.quit()
+        else:
+            print("DailyMail nit required (nothing to do)")

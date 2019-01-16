@@ -21,17 +21,27 @@ class Command(BaseCommand):
         M = imaplib.IMAP4_SSL(imap_server, imap_port)
         try:
             M.login(settings.EMAIL_USERNAME, settings.EMAIL_PASSWORD)
-            M.select("INBOX", True)
+            print("Login: OK")
+            M.select("INBOX", False)
             tmp, data = M.search(None, 'ALL')
             newest_known_email = Mail.objects.all().order_by('sequence').last()
             if newest_known_email is not None:
                 highest_known_email = newest_known_email.sequence
             else:
                 highest_known_email = 0
+
+            print("newest_known_email = ", highest_known_email)
+            print("Server has: " + str(data[0].split()))
             for num in data[0].split():
                 if int(num) > highest_known_email:
                     tmp, content = M.fetch(num, '(RFC822)')
-                    msg = email.message_from_string(content[0][1].decode('utf-8'))
+                    body = content[0][1]
+                    try:
+                        body = body.decode('utf-8')
+                    except UnicodeDecodeError:
+                        body = body.decode('iso-8859-1')
+                    print(body, type(body))
+                    msg = email.message_from_string(body)
                     title = msg["Subject"]
                     direction = False
                     sequence = num
