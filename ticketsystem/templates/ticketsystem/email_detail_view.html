@@ -17,6 +17,14 @@
 <textarea disabled rows="15" cols="80">
 {{ content|safe }}
 </textarea>
+<br><br>
+<b>Attachments:</b>
+<ul>
+{% for attachment in attachments %}
+  <li>{{ attachment }}</li>
+{% endfor %}
+</ul>
+
 {% if sender != "PrivacyScore" %}
 <br><br>
 <h3>Quick Answer</h3>

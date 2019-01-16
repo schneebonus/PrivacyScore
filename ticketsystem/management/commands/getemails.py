@@ -9,6 +9,7 @@ from ticketsystem.models import Mail
 from ticketsystem.models import Issue
 from ticketsystem.models import HistoryElement
 from ticketsystem.models import State
+from ticketsystem.models import Attachment
 from django.conf import settings
 import bleach
 
@@ -48,9 +49,13 @@ class Command(BaseCommand):
                         sender = msg["From"]
                         receiver = msg["To"]
                         body = ""
+                        attachments = []
                         for part in msg.walk():
                             if part.get_content_type() == "text/plain" or part.get_content_type() == "application/pgp-signature":
                                 body += str(part.get_payload()) + "\n"
+                            filename = part.get_filename()
+                            if filename is not None:
+                                attachments.append(filename)
                         received_at = msg["Date"]
                         url = ""
 
@@ -70,6 +75,12 @@ class Command(BaseCommand):
                         new_mail = Mail(title=title, direction=direction, sequence=sequence,
                                         sender=sender, receiver=receiver, body=body, url=url)
                         new_mail.save()
+
+                        # attachments for email
+                        for at in attachments:
+                            att_model = Attachment(filename=at, mail = new_mail)
+                            att_model.save()
+
                     except:
                         print("ERROR: Problem while handling this email: " + str(num))
 

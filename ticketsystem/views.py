@@ -5,6 +5,7 @@ from ticketsystem.models import State
 from ticketsystem.models import Mail
 from ticketsystem.models import ProblemClass
 from ticketsystem.models import Address
+from ticketsystem.models import Attachment
 from ticketsystem.models import HistoryElement
 import smtplib
 from ticketsystem.models import DailyNotificationSubscriber
@@ -138,6 +139,8 @@ def email_view(request):
     set_answered = answered is not ""
     email = Mail.objects.get(id=id)
 
+    attachments = [att.filename for att in Attachment.objects.all().filter(mail=email)]
+
     print(set_answered)
 
     if set_answered:
@@ -157,6 +160,7 @@ def email_view(request):
         'receiver': email.receiver,
         'subject': email.title,
         'content': email.body,
+        'attachments': attachments,
         }
     return render(request, 'ticketsystem/email_detail_view.html', context)
 

@@ -58,3 +58,9 @@ class Mail(models.Model):
 
     def __str__(self):
         return "%s -> %s -> %s" % (self.sender, self.title, self.receiver)
+
+class Attachment(models.Model):
+    filename = models.CharField(max_length=200)
+    mail = models.ForeignKey(Mail, on_delete=models.CASCADE)
+    def __str__(self):
+        return str(self.filename)
