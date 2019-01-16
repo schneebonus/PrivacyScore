@@ -12,6 +12,11 @@ class State(models.Model):
     def __str__(self):
         return self.title
 
+class DailyNotificationSubscriber(models.Model):
+    address = models.CharField(max_length=100)
+    def __str__(self):
+        return self.address
+
 class ProblemClass(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()

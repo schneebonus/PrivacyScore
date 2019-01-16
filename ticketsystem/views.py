@@ -7,6 +7,7 @@ from ticketsystem.models import ProblemClass
 from ticketsystem.models import Address
 from ticketsystem.models import HistoryElement
 import smtplib
+from ticketsystem.models import DailyNotificationSubscriber
 from django.conf import settings
 
 from email.mime.multipart import MIMEMultipart
@@ -21,6 +22,19 @@ def dashboard(request):
     for issue in all_issues:
         if len(issue.historyelement_set.all()) is 1:
             new_issues.append(issue)
+
+
+    subscribe = request.POST.get('subscription', "")
+    sub_mail = request.POST.get('email', "")
+
+    if subscribe is not "" and sub_mail is not "":
+        if subscribe == "Subscribe":
+            sub = DailyNotificationSubscriber(address=sub_mail)
+            sub.save()
+        if subscribe == "Unsubscribe":
+            subs = DailyNotificationSubscriber.objects.all().filter(address=sub_mail)
+            for sub in subs:
+                sub.delete()
 
     context = {
         'subsection': "Dashboard",
@@ -186,25 +200,27 @@ def notification_send_view(request):
             history = HistoryElement(state=state, issue=issue)
             history.save()
 
+    # ToDo: send email
+    fromaddr = settings.EMAIL_USERNAME
+
+    msg = MIMEMultipart()
+    msg['From'] = fromaddr
+    msg['Subject'] = title
+
+    msg.attach(MIMEText(body, 'utf-8'))
+
+    s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
+    s.login(fromaddr, settings.EMAIL_PASSWORD)
+
     # create mail objects for issue / url
     for r in emails:
         mail = Mail(title=title, answered=True, direction=True, sender="PrivacyScore", receiver=r, body=body, url = url)
         mail.save()
 
-        # ToDo: send email
-        fromaddr = settings.EMAIL_USERNAME
         toaddr = r
-
-        msg = MIMEMultipart()
-        msg['From'] = fromaddr
         msg['To'] = toaddr
-        msg['Subject'] = title
-
-        msg.attach(MIMEText(body, 'utf-8'))
-
-        s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
-        s.login(fromaddr, settings.EMAIL_PASSWORD)
         s.sendmail(fromaddr, toaddr, msg.as_string())
+    s.quit()
 
     context = {
         'subsection': "Notification send",

@@ -7,10 +7,13 @@ The dashboard summarizes all issues that are waiting for a human interaction.
 <div class="row">
         <div class="col-xs-12 col-md-3 flex-last pull-right text-left">
           <h4>Daily notification</h4>
-          E-mail addresses that have been entered for daily notification receive a summary of pending events each morning.<br><br>
-          <input type="email" id="email" name="email" class="form-control" placeholder="E-Mail Address"><br>
-          <a href="#" class="btn btn-primary btn-block">Subscribe</a>
-          <a href="#" class="btn btn-primary btn-block">Unsubscribe</a>
+          <form action="#" method="POST">
+            {% csrf_token %}
+            E-mail addresses that have been entered for daily notification receive a summary of pending events each morning.<br><br>
+            <input type="email" id="email" name="email" class="form-control" placeholder="E-Mail Address"><br>
+            <input type="submit" name="subscription" value="Subscribe" class="btn btn-primary btn-block">
+            <input type="submit" name="subscription" value="Unsubscribe"  class="btn btn-primary btn-block">
+          </form>
         </div>
         <div class="col-xs-12 col-md-8">
           <h3>Waiting for notification</h3>
