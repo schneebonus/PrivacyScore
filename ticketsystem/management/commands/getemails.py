@@ -29,7 +29,6 @@ class Command(BaseCommand):
                 highest_known_email = newest_known_email.sequence
             else:
                 highest_known_email = 0
-            highest_known_email = 3 #####
             print("newest_known_email = ", highest_known_email)
             print("Server has: " + str(data[0].split()))
             for num in data[0].split():
