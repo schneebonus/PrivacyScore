@@ -9,6 +9,7 @@ from ticketsystem.models import Mail
 from ticketsystem.models import Issue
 from ticketsystem.models import HistoryElement
 from ticketsystem.models import State
+from email.header import decode_header
 from ticketsystem.models import Attachment
 from django.conf import settings
 import bleach
@@ -43,6 +44,7 @@ class Command(BaseCommand):
                         except UnicodeDecodeError:
                             body = body_raw.decode('iso-8859-1')
                         msg = email.message_from_string(body)
+
                         title = msg["Subject"]
                         direction = False
                         sequence = num
@@ -81,8 +83,9 @@ class Command(BaseCommand):
                             att_model = Attachment(filename=at, mail = new_mail)
                             att_model.save()
 
-                    except:
+                    except Exception as e:
                         print("ERROR: Problem while handling this email: " + str(num))
+                        print(e)
 
             M.close()
             M.logout()

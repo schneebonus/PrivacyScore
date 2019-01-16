@@ -211,7 +211,7 @@ def notification_send_view(request):
     msg['From'] = fromaddr
     msg['Subject'] = title
 
-    msg.attach(MIMEText(body, 'utf-8'))
+    msg.attach(MIMEText(body, 'plain'))
 
     s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
     s.login(fromaddr, settings.EMAIL_PASSWORD)
