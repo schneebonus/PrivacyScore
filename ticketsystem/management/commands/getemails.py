@@ -12,6 +12,7 @@ from ticketsystem.models import State
 from django.conf import settings
 import bleach
 
+
 class Command(BaseCommand):
     help = 'Check for new emails and put them into the database. Should be triggered by a cron job.'
 
@@ -33,39 +34,44 @@ class Command(BaseCommand):
             print("Server has: " + str(data[0].split()))
             for num in data[0].split():
                 if int(num) > highest_known_email:
-                    tmp, content_raw = M.fetch(num, '(RFC822)')
-                    body_raw = content_raw[0][1]
                     try:
-                        body = body_raw.decode('utf-8')
-                    except UnicodeDecodeError:
-                        body = body_raw.decode('iso-8859-1')
-                    msg = email.message_from_string(body)
-                    title = msg["Subject"]
-                    direction = False
-                    sequence = num
-                    sender = msg["From"]
-                    receiver = msg["To"]
-                    body = ""
-                    for part in msg.walk():
-                        if part.get_content_type() == "text/plain" or part.get_content_type() == "application/pgp-signature":
-                            body += str(part.get_payload()) + "\n"
-                    received_at = msg["Date"]
-                    url = ""
+                        tmp, content_raw = M.fetch(num, '(RFC822)')
+                        body_raw = content_raw[0][1]
+                        try:
+                            body = body_raw.decode('utf-8')
+                        except UnicodeDecodeError:
+                            body = body_raw.decode('iso-8859-1')
+                        msg = email.message_from_string(body)
+                        title = msg["Subject"]
+                        direction = False
+                        sequence = num
+                        sender = msg["From"]
+                        receiver = msg["To"]
+                        body = ""
+                        for part in msg.walk():
+                            if part.get_content_type() == "text/plain" or part.get_content_type() == "application/pgp-signature":
+                                body += str(part.get_payload()) + "\n"
+                        received_at = msg["Date"]
+                        url = ""
 
-                    print(title + " from " + sender)
+                        print(title + " from " + sender)
 
-                    regex_url = "^.*Schwachstellen auf Ihrer Webseite \( (.*\..*) \).*$"
-                    matchObj = re.match( regex_url, title)
-                    if matchObj is not None:
-                        url = matchObj.group(1)
-                        issues = Issue.objects.all().filter(url=url)
-                        for issue in issues:
-                            state = State.objects.get(id=4)
-                            history = HistoryElement(state=state, issue=issue)
-                            history.save()
 
-                    new_mail = Mail(title=title, direction=direction, sequence=sequence, sender=sender, receiver=receiver, body=body, url=url)
-                    new_mail.save()
+                        regex_url = "^.*Schwachstellen auf Ihrer Webseite \( (.*\..*) \).*$"
+                        matchObj = re.match(regex_url, title)
+                        if matchObj is not None:
+                            url = matchObj.group(1)
+                            issues = Issue.objects.all().filter(url=url)
+                            for issue in issues:
+                                state = State.objects.get(id=4)
+                                history = HistoryElement(state=state, issue=issue)
+                                history.save()
+
+                        new_mail = Mail(title=title, direction=direction, sequence=sequence,
+                                        sender=sender, receiver=receiver, body=body, url=url)
+                        new_mail.save()
+                    except:
+                        print("ERROR: Problem while handling this email: " + str(num))
 
             M.close()
             M.logout()
