@@ -160,6 +160,7 @@ def email_view(request):
         'receiver': email.receiver,
         'subject': email.title,
         'content': email.body,
+        'message_id': email.message_id,
         'attachments': attachments,
         }
     return render(request, 'ticketsystem/email_detail_view.html', context)
@@ -191,6 +192,8 @@ def notification_send_view(request):
     body = request.POST.get('content')
     url = request.POST.get('url', "")
     answer_to = request.POST.get('answer_to', 0)
+    message_id = request.POST.get("message_id", "")
+
     # update state
     if url is not "":
         issues = Issue.objects.filter(url=url)
@@ -211,6 +214,10 @@ def notification_send_view(request):
     msg['From'] = fromaddr
     msg['Subject'] = title
 
+    if message_id != "":
+        msg['In-Reply-To'] = message_id
+        msg['References'] = message_id
+
     msg.attach(MIMEText(body, 'plain'))
 
     s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
@@ -218,7 +225,7 @@ def notification_send_view(request):
 
     # create mail objects for issue / url
     for r in emails:
-        mail = Mail(title=title, answered=True, direction=True, sender="PrivacyScore", receiver=r, body=body, url = url)
+        mail = Mail(title=title, answered=True, direction=True, sender="PrivacyScore", receiver=r, body=body, url = url, message_id="")
         mail.save()
 
         toaddr = r

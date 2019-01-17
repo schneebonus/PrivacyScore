@@ -9,10 +9,12 @@ from ticketsystem.models import Mail
 from ticketsystem.models import Issue
 from ticketsystem.models import HistoryElement
 from ticketsystem.models import State
+import chardet
 from email.header import decode_header
 from ticketsystem.models import Attachment
 from django.conf import settings
 import bleach
+import email.parser
 
 
 class Command(BaseCommand):
@@ -39,30 +41,40 @@ class Command(BaseCommand):
                     try:
                         tmp, content_raw = M.fetch(num, '(RFC822)')
                         body_raw = content_raw[0][1]
-                        try:
-                            body = body_raw.decode('utf-8')
-                        except UnicodeDecodeError:
-                            body = body_raw.decode('iso-8859-1')
-                        msg = email.message_from_string(body)
 
-                        title = msg["Subject"]
+                        msg = email.message_from_bytes(content_raw[0][1])
+
+                        # decode headers
+                        s, encoding = decode_header(msg['Subject'])[0]
+                        title = s if type(s) is str else s.decode(
+                            encoding or 'utf-8')
+
+                        s, encoding = decode_header(msg['From'])[0]
+                        sender = s if type(s) is str else s.decode(
+                            encoding or 'utf-8')
+
+                        s, encoding = decode_header(msg['To'])[0]
+                        receiver = s if type(s) is str else s.decode(
+                            encoding or 'utf-8')
+
+                        body = body_raw.decode(encoding or 'utf-8')
+                        message_id = msg.get('Message-ID')
+
                         direction = False
                         sequence = num
-                        sender = msg["From"]
-                        receiver = msg["To"]
                         body = ""
                         attachments = []
                         for part in msg.walk():
                             if part.get_content_type() == "text/plain" or part.get_content_type() == "application/pgp-signature":
-                                body += str(part.get_payload()) + "\n"
+                                payload_raw = part.get_payload(decode=True)
+                                payload = payload_raw.decode(part.get_content_charset() or "utf-8")
+
+                                body += payload + "\n"
                             filename = part.get_filename()
                             if filename is not None:
                                 attachments.append(filename)
                         received_at = msg["Date"]
                         url = ""
-
-                        print(title + " from " + sender)
-
 
                         regex_url = "^.*Schwachstellen auf Ihrer Webseite \( (.*\..*) \).*$"
                         matchObj = re.match(regex_url, title)
@@ -71,18 +83,17 @@ class Command(BaseCommand):
                             issues = Issue.objects.all().filter(url=url)
                             for issue in issues:
                                 state = State.objects.get(id=4)
-                                history = HistoryElement(state=state, issue=issue)
+                                history = HistoryElement(
+                                    state=state, issue=issue)
                                 history.save()
-
                         new_mail = Mail(title=title, direction=direction, sequence=sequence,
-                                        sender=sender, receiver=receiver, body=body, url=url)
+                                        sender=sender, receiver=receiver, body=body, url=url, message_id=message_id)
                         new_mail.save()
 
                         # attachments for email
                         for at in attachments:
-                            att_model = Attachment(filename=at, mail = new_mail)
+                            att_model = Attachment(filename=at, mail=new_mail)
                             att_model.save()
-
                     except Exception as e:
                         print("ERROR: Problem while handling this email: " + str(num))
                         print(e)

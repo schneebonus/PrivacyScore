@@ -35,7 +35,8 @@
   <textarea name="content" form="usrform" rows="15" cols="80"></textarea>
   <input type="submit" value="Send notification" class="btn btn-primary btn-block">
   <input type="hidden" name="url" value="{{ url }}">
-  <input type="hidden" name="answer_to" value="{{ id }}"">
+  <input type="hidden" name="answer_to" value="{{ id }}">
+  <input type="hidden" name="message_id" value="{{ email.message_id }}">
 </form>
 {% endif %}
 {% endblock %}
