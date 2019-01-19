@@ -213,31 +213,30 @@ def notification_send_view(request):
     # ToDo: send email
     fromaddr = settings.EMAIL_USERNAME
 
-    msg = MIMEMultipart()
-    msg['From'] = fromaddr
-    msg['Subject'] = title
-    msg["Message-ID"] = email_lib.make_msgid()
-
-    print("message_id: ", message_id)
-
-    if message_id != "":
-        msg.add_header('In-Reply-To', message_id)
-        msg.add_header('References', references + "\n" + message_id)
-
-    msg.attach(MIMEText(body, 'plain'))
-
-    s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
-    s.login(fromaddr, settings.EMAIL_PASSWORD)
-
     # create mail objects for issue / url
-    for r in emails:
-        mail = Mail(title=title, message_id=msg["Message-ID"], answered=True, direction=True, sender="PrivacyScore", receiver=r, body=body, url = url)
+    for toaddr in emails:
+        msg = MIMEMultipart()
+        msg['From'] = fromaddr
+        msg['Subject'] = title
+
+        if message_id != "":
+            msg.add_header('In-Reply-To', message_id)
+            msg.add_header('References', references + message_id)
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
+        s.login(fromaddr, settings.EMAIL_PASSWORD)
+        msg["Message-ID"] = email_lib.make_msgid()
+
+
+
+        mail = Mail(title=title, message_id=msg["Message-ID"], answered=True, direction=True, sender="PrivacyScore", receiver=toaddr, body=body, url = url)
         mail.save()
 
-        toaddr = r
         msg['To'] = toaddr
         s.sendmail(fromaddr, toaddr, msg.as_string())
-    s.quit()
+        s.quit()
 
     context = {
         'subsection': "Notification send",

@@ -59,6 +59,7 @@ class Command(BaseCommand):
             tmp, data = M.search(None, 'ALL')
             known_uids = {int(email.sequence) for email in Mail.objects.all()}
 
+            print("UIDs known by the ticketsystem:")
             print(known_uids)
 
             for num in data[0].split():
@@ -114,9 +115,9 @@ class Command(BaseCommand):
                             # lets try to find the original mail in the headers
                             for ref in references.split("\n"):
                                 try:
-                                    referencing_mail = Mail.objects.all().get(message_id=ref)
-                                    if referencing_mail is not None:
-                                        url = referencing_mail.url
+                                    referencing_mail = Mail.objects.all().filter(message_id=ref)
+                                    if len(referencing_mail) > 0:
+                                        url = referencing_mail[0].url
                                 except Mail.DoesNotExist:
                                     pass
                         if url != "":
