@@ -32,7 +32,19 @@
   {% csrf_token %}
   <input type="hidden" size=60 name="receiver" value="{{ sender }}">
   <input type="hidden" value="Re: {{ subject }}" name="title">
-  <textarea name="content" form="usrform" rows="15" cols="80"></textarea>
+  <textarea name="content" form="usrform" rows="15" cols="80">
+
+
+
+
+
+-----Ursprüngliche Nachricht-----
+Von: {{ sender }}
+An: {{ receiver }}
+Betreff: {{ subject }}
+
+{{ content|safe }}
+  </textarea>
   <input type="submit" value="Send notification" class="btn btn-primary btn-block">
   <input type="hidden" name="url" value="{{ url }}">
   <input type="hidden" name="answer_to" value="{{ id }}">

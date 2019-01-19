@@ -20,6 +20,34 @@ import email.parser
 class Command(BaseCommand):
     help = 'Check for new emails and put them into the database. Should be triggered by a cron job.'
 
+    def decode_sender(self, text):
+        s, encoding = decode_header(text)[0]
+        sender = s if type(s) is str else s.decode(
+            encoding or 'utf-8')
+
+        regex_url = "^.*<(.*)>*$"
+        matchObj = re.match(regex_url, sender)
+        if matchObj is not None:
+            email = matchObj.group(1)
+            return sender
+        else:
+            matchObj = re.match(regex_url, text)
+            email = ""
+            if matchObj is not None:
+                email = matchObj.group(1)
+
+            return sender + " <" + email + ">"
+
+    def extract_uid(self, responce):
+        responce_utf8 = responce[0].decode("utf-8")
+        # Example: 5 (UID 38)
+        regex_uid = "^.*\(UID (.*)\)>*$"
+        matchObj = re.match(regex_uid, responce_utf8)
+        if matchObj is not None:
+            uid = matchObj.group(1)
+            return uid
+        return 0
+
     def handle(self, *args, **options):
         imap_server = settings.EMAIL_IMAP_SERVER
         imap_port = settings.EMAIL_IMAP_PORT
@@ -29,17 +57,16 @@ class Command(BaseCommand):
             print("Login: OK")
             M.select("INBOX", False)
             tmp, data = M.search(None, 'ALL')
-            newest_known_email = Mail.objects.all().order_by('sequence').last()
-            if newest_known_email is not None:
-                highest_known_email = newest_known_email.sequence
-            else:
-                highest_known_email = 0
-            print("newest_known_email = ", highest_known_email)
-            print("Server has: " + str(data[0].split()))
+            known_uids = {int(email.sequence) for email in Mail.objects.all()}
+
+            print(known_uids)
+
             for num in data[0].split():
-                if int(num) > highest_known_email:
+                tmp, uid = M.fetch(num, '(UID)')
+                uid = self.extract_uid(uid)
+                if int(uid) not in known_uids:
                     try:
-                        tmp, content_raw = M.fetch(num, '(RFC822)')
+                        tmp, content_raw = M.fetch(num, '(UID RFC822)')
                         body_raw = content_raw[0][1]
 
                         msg = email.message_from_bytes(content_raw[0][1])
@@ -49,9 +76,9 @@ class Command(BaseCommand):
                         title = s if type(s) is str else s.decode(
                             encoding or 'utf-8')
 
-                        s, encoding = decode_header(msg['From'])[0]
-                        sender = s if type(s) is str else s.decode(
-                            encoding or 'utf-8')
+                        print(title)
+
+                        sender = self.decode_sender(msg['From'])
 
                         s, encoding = decode_header(msg['To'])[0]
                         receiver = s if type(s) is str else s.decode(
@@ -61,7 +88,7 @@ class Command(BaseCommand):
                         message_id = msg.get('Message-ID')
 
                         direction = False
-                        sequence = num
+                        sequence = uid
                         body = ""
                         attachments = []
                         for part in msg.walk():
@@ -86,6 +113,7 @@ class Command(BaseCommand):
                                 history = HistoryElement(
                                     state=state, issue=issue)
                                 history.save()
+
                         new_mail = Mail(title=title, direction=direction, sequence=sequence,
                                         sender=sender, receiver=receiver, body=body, url=url, message_id=message_id)
                         new_mail.save()
