@@ -53,6 +53,7 @@ class Mail(models.Model):
     receiver = models.CharField(max_length=200)
     body = models.TextField()
     message_id = models.CharField(max_length=200)
+    references = models.CharField(max_length=400)
     answered = models.BooleanField(default=False)
     received_at = models.DateTimeField(default=now, blank=True)
     url = models.CharField(max_length=200)

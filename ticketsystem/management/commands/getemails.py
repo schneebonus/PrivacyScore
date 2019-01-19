@@ -86,7 +86,9 @@ class Command(BaseCommand):
 
                         body = body_raw.decode(encoding or 'utf-8')
                         message_id = msg.get('Message-ID')
-
+                        references = msg.get("References")
+                        if references == None:
+                            references = ""
                         direction = False
                         sequence = uid
                         body = ""
@@ -115,13 +117,14 @@ class Command(BaseCommand):
                                 history.save()
 
                         new_mail = Mail(title=title, direction=direction, sequence=sequence,
-                                        sender=sender, receiver=receiver, body=body, url=url, message_id=message_id)
+                                        sender=sender, receiver=receiver, body=body, url=url, message_id=message_id, references=references)
                         new_mail.save()
 
                         # attachments for email
                         for at in attachments:
                             att_model = Attachment(filename=at, mail=new_mail)
                             att_model.save()
+
                     except Exception as e:
                         print("ERROR: Problem while handling this email: " + str(num))
                         print(e)

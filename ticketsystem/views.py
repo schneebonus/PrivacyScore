@@ -13,6 +13,7 @@ from django.conf import settings
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import email.utils as email_lib
 # Create your views here.
 
 
@@ -161,6 +162,7 @@ def email_view(request):
         'subject': email.title,
         'content': email.body,
         'message_id': email.message_id,
+        'references': email.references,
         'attachments': attachments,
         }
     return render(request, 'ticketsystem/email_detail_view.html', context)
@@ -193,6 +195,7 @@ def notification_send_view(request):
     url = request.POST.get('url', "")
     answer_to = request.POST.get('answer_to', 0)
     message_id = request.POST.get("message_id", "")
+    references = request.POST.get("references", "")
 
     # update state
     if url is not "":
@@ -213,10 +216,13 @@ def notification_send_view(request):
     msg = MIMEMultipart()
     msg['From'] = fromaddr
     msg['Subject'] = title
+    msg["Message-ID"] = email_lib.make_msgid()
+
+    print("message_id: ", message_id)
 
     if message_id != "":
-        msg['In-Reply-To'] = message_id
-        msg['References'] = message_id
+        msg.add_header('In-Reply-To', message_id)
+        msg.add_header('References', references + "\n" + message_id)
 
     msg.attach(MIMEText(body, 'plain'))
 

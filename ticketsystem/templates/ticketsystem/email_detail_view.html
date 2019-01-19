@@ -31,7 +31,7 @@
 <form action="{% url 'send' %}" method="POST" id="usrform">
   {% csrf_token %}
   <input type="hidden" size=60 name="receiver" value="{{ sender }}">
-  <input type="hidden" value="Re: {{ subject }}" name="title">
+  <input type="hidden" value="AW: {{ subject }}" name="title">
   <textarea name="content" form="usrform" rows="15" cols="80">
 
 
@@ -48,7 +48,8 @@ Betreff: {{ subject }}
   <input type="submit" value="Send notification" class="btn btn-primary btn-block">
   <input type="hidden" name="url" value="{{ url }}">
   <input type="hidden" name="answer_to" value="{{ id }}">
-  <input type="hidden" name="message_id" value="{{ email.message_id }}">
+  <input type="hidden" name="message_id" value="{{ message_id }}">
+  <input type="hidden" name="references" value="{{ references }}">
 </form>
 {% endif %}
 {% endblock %}
