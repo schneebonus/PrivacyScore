@@ -109,7 +109,19 @@ class Command(BaseCommand):
                         matchObj = re.match(regex_url, title)
                         if matchObj is not None:
                             url = matchObj.group(1)
+                        else:
+                            # regex did not get it (subject changed or spam)
+                            # lets try to find the original mail in the headers
+                            for ref in references.split("\n"):
+                                try:
+                                    referencing_mail = Mail.objects.all().get(message_id=ref)
+                                    if referencing_mail is not None:
+                                        url = referencing_mail.url
+                                except Mail.DoesNotExist:
+                                    pass
+                        if url != "":
                             issues = Issue.objects.all().filter(url=url)
+                            print("\treply for: ", url)
                             for issue in issues:
                                 state = State.objects.get(id=4)
                                 history = HistoryElement(
@@ -124,7 +136,6 @@ class Command(BaseCommand):
                         for at in attachments:
                             att_model = Attachment(filename=at, mail=new_mail)
                             att_model.save()
-
                     except Exception as e:
                         print("ERROR: Problem while handling this email: " + str(num))
                         print(e)

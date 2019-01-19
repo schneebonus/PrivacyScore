@@ -231,7 +231,7 @@ def notification_send_view(request):
 
     # create mail objects for issue / url
     for r in emails:
-        mail = Mail(title=title, answered=True, direction=True, sender="PrivacyScore", receiver=r, body=body, url = url, message_id="")
+        mail = Mail(title=title, message_id=msg["Message-ID"], answered=True, direction=True, sender="PrivacyScore", receiver=r, body=body, url = url)
         mail.save()
 
         toaddr = r
