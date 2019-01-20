@@ -113,7 +113,7 @@ class Command(BaseCommand):
                         else:
                             # regex did not get it (subject changed or spam)
                             # lets try to find the original mail in the headers
-                            for ref in references.split("\n"):
+                            for ref in references.split(" "):
                                 try:
                                     referencing_mail = Mail.objects.all().filter(message_id=ref)
                                     if len(referencing_mail) > 0:

@@ -20,6 +20,7 @@ import email.utils as email_lib
 def dashboard(request):
     all_issues = Issue.objects.all()
     pending_emails = Mail.objects.all().filter(answered=False)
+    unsorted = len(Mail.objects.all().filter(url=""))
     new_issues = []
     for issue in all_issues:
         if len(issue.historyelement_set.all()) is 1:
@@ -41,6 +42,7 @@ def dashboard(request):
     context = {
         'subsection': "Dashboard",
         'emails': pending_emails,
+        'unsorted': unsorted,
         'notifications': [
             {'id': issue.id,
             'url': issue.url,
@@ -213,7 +215,7 @@ def unsorted_emails_view(request):
     emails = Mail.objects.all().filter(url="")
 
     context = {
-        'subsection': "Unsorted E-Mails (not linked to any issue)",
+        'subsection': "Unsorted E-Mails",
         'emails': emails
         }
     return render(request, 'ticketsystem/unsorted_emails.html', context)
@@ -252,7 +254,7 @@ def notification_send_view(request):
 
         if message_id != "":
             msg.add_header('In-Reply-To', message_id)
-            msg.add_header('References', references + message_id)
+            msg.add_header('References', references + " " + message_id)
 
         msg.attach(MIMEText(body, 'plain'))
 
