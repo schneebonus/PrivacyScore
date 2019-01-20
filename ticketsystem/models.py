@@ -28,6 +28,7 @@ class Issue(models.Model):
     url = models.CharField(max_length=100)
     problem_class = models.ForeignKey(ProblemClass, on_delete=models.CASCADE)
     publication = models.DateTimeField(blank=True, null=True)
+    prevent_publication = models.BooleanField(default=False)
     def __str__(self):
         return self.url + ":"+self.problem_class.title
 
@@ -43,6 +44,7 @@ class HistoryElement(models.Model):
     state = models.ForeignKey(State, on_delete=models.CASCADE)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
     comment = models.CharField(max_length=100, default="", blank=True)
+    operator = models.CharField(max_length=100)
     def __str__(self):
         return str(self.state) + " for " + str(self.issue)
 

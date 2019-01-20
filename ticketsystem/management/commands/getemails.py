@@ -16,7 +16,6 @@ from django.conf import settings
 import bleach
 import email.parser
 
-
 class Command(BaseCommand):
     help = 'Check for new emails and put them into the database. Should be triggered by a cron job.'
 
@@ -48,10 +47,12 @@ class Command(BaseCommand):
             return uid
         return 0
 
+
     def handle(self, *args, **options):
         imap_server = settings.EMAIL_IMAP_SERVER
         imap_port = settings.EMAIL_IMAP_PORT
         M = imaplib.IMAP4_SSL(imap_server, imap_port)
+
         try:
             M.login(settings.EMAIL_USERNAME, settings.EMAIL_PASSWORD)
             print("Login: OK")
@@ -126,7 +127,7 @@ class Command(BaseCommand):
                             for issue in issues:
                                 state = State.objects.get(id=4)
                                 history = HistoryElement(
-                                    state=state, issue=issue)
+                                    operator="Mail Cronjob",state=state, issue=issue)
                                 history.save()
 
                         new_mail = Mail(title=title, direction=direction, sequence=sequence,

@@ -10,7 +10,8 @@ from ticketsystem.models import HistoryElement
 import smtplib
 from ticketsystem.models import DailyNotificationSubscriber
 from django.conf import settings
-
+import pytz
+from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import email.utils as email_lib
@@ -70,7 +71,7 @@ def inject_testdata_view(request):
             issue.save()
             # set state
             state = State.objects.get(id=1)
-            history = HistoryElement(state=state, issue=issue)
+            history = HistoryElement(operator="PrivacyScore Scanner",  state=state, issue=issue)
             history.save()
             # create email addresses
             for email in emails.split("; "):
@@ -114,21 +115,51 @@ def open_issue_list_view(request):
 
 def issue_view(request):
     id = request.GET['id']
+    action = request.GET.get('action', "")
+
     issue = Issue.objects.get(id=id)
+
+    if action == "prevent":
+        Issue.objects.all().filter(id=id).update(prevent_publication=True)
+        pub_state = State.objects.get(id=6)
+        history = HistoryElement(operator=request.user.username, comment="Prevented! No publication allowed!", state=pub_state, issue=issue)
+        history.save()
+    elif action == "restart":
+        Issue.objects.all().filter(id=id).update(prevent_publication=False)
+        pub_state = State.objects.get(id=5)
+        history = HistoryElement(operator=request.user.username, comment="Allowed!", state=pub_state, issue=issue)
+        history.save()
+        # calculate new publication date
+        u = datetime.now(pytz.utc)  # now
+        d = timedelta(days=settings.DAYS_TILL_AUTO_DISCLOSURE)  # disclosure in 14 days
+        t = u + d                   # t is the sum of now + 14 days
+        Issue.objects.all().filter(id=id).update(publication=t)
+        pub_state = State.objects.get(id=5)
+        history = HistoryElement(operator=request.user.username, comment="Set to " + str(t), state=pub_state, issue=issue)
+        history.save()
+    elif action == "extend":
+        new_publication = issue.publication + timedelta(days=14)
+        Issue.objects.all().filter(id=id).update(publication=new_publication)
+        pub_state = State.objects.get(id=5)
+        history = HistoryElement(operator=request.user.username, comment="Set to " + str(new_publication), state=pub_state, issue=issue)
+        history.save()
+
     emails = Mail.objects.filter(url=issue.url).order_by("id")
     history_elements = issue.historyelement_set.all().order_by('date')
     more_issues_for_url = Issue.objects.filter(url=issue.url).exclude(id=id)
     # ToDo: error handling in case no id given
+    issue = Issue.objects.get(id=id)
     context = {
         'subsection': issue.problem_class.title + " on " + issue.url,
         'id': id,
         'url': issue.url,
         'publication_date': issue.publication,
+        'prevent_publication': issue.prevent_publication,
         'status': history_elements.last().state.title,
         'description': issue.problem_class.description,
         'emails': emails,
         'history': [
-            {'date': element.date, 'description': element.state.title, 'comment': element.comment} for element in history_elements
+            {'date': element.date, 'description': element.state.title, 'comment': element.comment, 'operator': element.operator} for element in history_elements
             ],
         'more_issues_for_url': [
             {'id': next_issue.id, 'problem_class': next_issue.problem_class.title} for next_issue in more_issues_for_url
@@ -165,6 +196,12 @@ def email_view(request):
     if link_to != "":
         emails = Mail.objects.all().filter(id=id)
         emails.update(url=link_to)
+        issues = Issue.objects.all().filter(url=link_to)
+        for issue in issues:
+            state = State.objects.get(id=4)
+            history = HistoryElement(
+                operator=request.user.username,state=state, issue=issue, comment="Linked e-mail to " + link_to + ".")
+            history.save()
 
     set_answered = answered is not ""
     email = Mail.objects.get(id=id)
@@ -182,7 +219,7 @@ def email_view(request):
         emails.update(answered=True)
         for issue in issues:
             state = State.objects.get(id=3)
-            history = HistoryElement(state=state, issue=issue)
+            history = HistoryElement(operator=request.user.username, state=state, issue=issue)
             history.save()
 
     context = {
@@ -236,8 +273,6 @@ def notification_send_view(request):
         issues = Issue.objects.filter(url=url)
         if answer_to is 0:
             state = State.objects.get(id=2)
-            import pytz
-            from datetime import datetime, timedelta
             u = datetime.now(pytz.utc)  # now
             d = timedelta(days=settings.DAYS_TILL_AUTO_DISCLOSURE)  # disclosure in 14 days
             t = u + d                   # t is the sum of now + 14 days
@@ -245,14 +280,14 @@ def notification_send_view(request):
             none_issues.update(publication=t)
             pub_state = State.objects.get(id=5)
             for issue in issues:
-                history = HistoryElement(comment="Set to " + str(t), state=pub_state, issue=issue)
+                history = HistoryElement(operator=request.user.username, comment="Set to " + str(t), state=pub_state, issue=issue)
                 history.save()
         else:
             state = State.objects.get(id=3)
             email = Mail.objects.all().filter(id=answer_to)
             email.update(answered=True)
         for issue in issues:
-            history = HistoryElement(state=state, issue=issue)
+            history = HistoryElement(operator=request.user.username, state=state, issue=issue)
             history.save()
 
     # ToDo: send email
