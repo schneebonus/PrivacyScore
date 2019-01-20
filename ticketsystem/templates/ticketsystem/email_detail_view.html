@@ -1,4 +1,12 @@
 {% extends 'ticketsystem/layout.html' %}
+{% load static %}
+
+{% block css %}
+
+{% if url == "" %}
+  <link rel="stylesheet" href="{% static "ticketsystem/css/searchable_dropdown.css" %}" />
+{% endif %}
+{% endblock %}
 
 {% block content %}
 {% if sender != "PrivacyScore" %}
@@ -12,6 +20,22 @@
 <h3>Details</h3>
 <b>Sender:</b><br>{{ sender }}<br>
 <b>Recipient:</b><br>{{ receiver }}<br>
+<b>Linked To:</b><br>
+{% if url != "" %}
+<a href="{% url 'url_view' %}?url={{ url }}">{{ url }}</a><br>
+{% else %}
+None
+<div class="dropdown">
+<button onclick="myFunction()" class="btn">Link now!</button>
+<div id="myDropdown" class="dropdown-content">
+ <input type="text" placeholder="Search for url ..." id="myInput" onkeyup="filterFunction()">
+ {% for url in urls %}
+  <a href="{% url 'email' %}?id={{ id }}&link_to={{ url }}">{{ url }}</a>
+{% endfor %}
+</div>
+</div>
+{% endif %}
+<br>
 <b>Subject:</b><br>{{ subject }}<br>
 <b>Text:</b><br>
 <textarea disabled rows="15" cols="80">
@@ -51,5 +75,31 @@ Betreff: {{ subject }}
   <input type="hidden" name="message_id" value="{{ message_id }}">
   <input type="hidden" name="references" value="{{ references }}">
 </form>
+{% endif %}
+
+{% if url == "" %}
+<script>
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+function filterFunction() {
+  var input, filter, ul, li, a, i;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  div = document.getElementById("myDropdown");
+  a = div.getElementsByTagName("a");
+  for (i = 0; i < a.length; i++) {
+    txtValue = a[i].textContent || a[i].innerText;
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      a[i].style.display = "";
+    } else {
+      a[i].style.display = "none";
+    }
+  }
+}
+</script>
 {% endif %}
 {% endblock %}

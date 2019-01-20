@@ -134,15 +134,44 @@ def issue_view(request):
     return render(request, 'ticketsystem/issue_detail_view.html', context)
 
 
+def url_view(request):
+    url = request.GET.get('url', "")
+    issues = Issue.objects.all().filter(url=url)
+
+    context = {
+        'subsection': "Issues for url " + url,
+        'issues': [
+            {
+            'id': issue.id,
+            'url': issue.url,
+            'status': issue.historyelement_set.all().order_by('-date').first().state.title,
+            'problem': issue.problem_class.title,
+            'creation': issue.historyelement_set.all().order_by('-date').last().date
+            } for issue in issues
+            ],
+        }
+
+    return render(request, 'ticketsystem/url_view.html', context)
+
+
 def email_view(request):
     id = request.GET.get('id', 0)
     answered = request.GET.get('answered', "")
+    link_to = request.GET.get('link_to', "")
+
+    if link_to != "":
+        emails = Mail.objects.all().filter(id=id)
+        emails.update(url=link_to)
+
     set_answered = answered is not ""
     email = Mail.objects.get(id=id)
+    issues_for_url = []
+    if email.url != "":
+        issues_for_url = Issue.objects.filter(url=email.url)
+    print(issues_for_url)
 
     attachments = [att.filename for att in Attachment.objects.all().filter(mail=email)]
-
-    print(set_answered)
+    urls = {issue.url for issue in Issue.objects.all()}
 
     if set_answered:
         issues = Issue.objects.filter(url=email.url)
@@ -164,6 +193,8 @@ def email_view(request):
         'message_id': email.message_id,
         'references': email.references,
         'attachments': attachments,
+        'issues_for_url': issues_for_url,
+        'urls': urls,
         }
     return render(request, 'ticketsystem/email_detail_view.html', context)
 
