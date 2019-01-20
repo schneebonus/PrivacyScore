@@ -33,6 +33,7 @@
             <h3>Body</h3>
             <textarea rows="20" cols="80" name="content" form="usrform">{{ issue.description }}</textarea>
             <input type="hidden" name="url" value="{{ issue.url }}">
+            <input type="hidden" name="issue_id" value="{{ issue.id }}">
             </p>
         </div>
 </div>

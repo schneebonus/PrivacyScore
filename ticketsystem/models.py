@@ -27,7 +27,7 @@ class ProblemClass(models.Model):
 class Issue(models.Model):
     url = models.CharField(max_length=100)
     problem_class = models.ForeignKey(ProblemClass, on_delete=models.CASCADE)
-    # publication = models.DateTimeField(default=0, blank=True)
+    publication = models.DateTimeField(blank=True, null=True)
     def __str__(self):
         return self.url + ":"+self.problem_class.title
 
@@ -42,6 +42,7 @@ class HistoryElement(models.Model):
         default=datetime.now, blank=True)
     state = models.ForeignKey(State, on_delete=models.CASCADE)
     issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=100, default="", blank=True)
     def __str__(self):
         return str(self.state) + " for " + str(self.issue)
 

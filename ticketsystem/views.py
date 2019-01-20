@@ -104,7 +104,8 @@ def open_issue_list_view(request):
             'url': issue.url,
             'status': issue.historyelement_set.all().order_by('-date').first().state.title,
             'problem': issue.problem_class.title,
-            'creation': issue.historyelement_set.all().order_by('-date').last().date
+            'creation': issue.historyelement_set.all().order_by('-date').last().date,
+            'publication': issue.publication,
             } for issue in search_results
             ],
         }
@@ -122,12 +123,12 @@ def issue_view(request):
         'subsection': issue.problem_class.title + " on " + issue.url,
         'id': id,
         'url': issue.url,
-        'publication_date': '?',
-        'status': history_elements.first().state.title,
+        'publication_date': issue.publication,
+        'status': history_elements.last().state.title,
         'description': issue.problem_class.description,
         'emails': emails,
         'history': [
-            {'date': element.date, 'description': element.state.title} for element in history_elements
+            {'date': element.date, 'description': element.state.title, 'comment': element.comment} for element in history_elements
             ],
         'more_issues_for_url': [
             {'id': next_issue.id, 'problem_class': next_issue.problem_class.title} for next_issue in more_issues_for_url
@@ -235,6 +236,17 @@ def notification_send_view(request):
         issues = Issue.objects.filter(url=url)
         if answer_to is 0:
             state = State.objects.get(id=2)
+            import pytz
+            from datetime import datetime, timedelta
+            u = datetime.now(pytz.utc)  # now
+            d = timedelta(days=settings.DAYS_TILL_AUTO_DISCLOSURE)  # disclosure in 14 days
+            t = u + d                   # t is the sum of now + 14 days
+            none_issues = issues.filter(publication=None)
+            none_issues.update(publication=t)
+            pub_state = State.objects.get(id=5)
+            for issue in issues:
+                history = HistoryElement(comment="Set to " + str(t), state=pub_state, issue=issue)
+                history.save()
         else:
             state = State.objects.get(id=3)
             email = Mail.objects.all().filter(id=answer_to)

@@ -17,12 +17,14 @@
   </form>
 </div>
 {% endif %}
+<div class="col-xs-12 col-md-8">
+  <div class="row">
 <h3>Details</h3>
 <b>Sender:</b><br>{{ sender }}<br>
 <b>Recipient:</b><br>{{ receiver }}<br>
 <b>Linked To:</b><br>
 {% if url != "" %}
-<a href="{% url 'url_view' %}?url={{ url }}">{{ url }}</a><br>
+<a href="{% url 'url_view' %}?url={{ url }}">{{ url }}</a>
 {% else %}
 None
 <div class="dropdown">
@@ -36,18 +38,20 @@ None
 </div>
 {% endif %}
 <br>
-<b>Subject:</b><br>{{ subject }}<br>
+<b>Subject:</b><br>{{ subject }}<br><br>
 <b>Text:</b><br>
 <textarea disabled rows="15" cols="80">
 {{ content|safe }}
 </textarea>
 <br><br>
+{% if attachments|length > 0%}
 <b>Attachments:</b>
 <ul>
 {% for attachment in attachments %}
   <li>{{ attachment }}</li>
 {% endfor %}
 </ul>
+{% endif %}
 
 {% if sender != "PrivacyScore" %}
 <br><br>
@@ -76,6 +80,7 @@ Betreff: {{ subject }}
   <input type="hidden" name="references" value="{{ references }}">
 </form>
 {% endif %}
+</div></div>
 
 {% if url == "" %}
 <script>

@@ -15,7 +15,7 @@
   </div>
   <div class="col-xs-12 col-md-8">
     <div class="row">
-      {% if emails|length == 0 and issues|length == 0 and unsorted == 0 %}
+      {% if emails|length == 0 and notifications|length == 0 and unsorted == 0 %}
       <div class="alert alert-success" role="alert">
         <h4 class="alert-heading">Well done!</h4>
         <p class="mb-0">No issue is waiting for a notification and no e-mail needs to be answered.</a></p>
@@ -23,12 +23,12 @@
       {% endif %}
       {% if unsorted > 0 %}
       <div class="alert alert-warning" role="alert">
-        <h4 class="alert-heading">Unsorted emails</h4>
+        <h4 class="alert-heading">Unsorted email{{ unsorted|pluralize:",s" }}</h4>
         <p class="mb-0">{{ unsorted }} e-mail{{ unsorted|pluralize:",s" }} could not be linked to an url or issue. Please <a href="{% url 'unsorted_emails' %}">have a look.</a></p>
       </div>
       {% endif %}
       The dashboard summarizes all issues that are waiting for a human interaction.
-      {% if issues|length > 0 %}
+      {% if notifications|length > 0 %}
       <h3>Waiting for notification</h3>
       <p class="disclaimer-short">
         A table of issues waiting for confirmation before shipping. <br>

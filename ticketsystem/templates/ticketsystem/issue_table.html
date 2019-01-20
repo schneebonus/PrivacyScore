@@ -3,7 +3,8 @@
     <th>URL</th>
     <th>Status</th>
     <th>Problemclass</th>
-    <th>Date of creation</th>
+    <th>Creation</th>
+    <th>Publication</th>
     <th></th>
   </tr>
   {% for issue in issues %}
@@ -12,6 +13,7 @@
     <td>{{ issue.status }}</td>
     <td>{{ issue.problem }}</td>
     <td>{{ issue.creation }}</td>
+    <td>{{ issue.publication }}</td>
     <td><a href="{% url 'issue' %}?id={{ issue.id }}">Details</a></td>
   <tr>
   {% endfor %}
