@@ -18,6 +18,7 @@ import email.utils as email_lib
 from django.contrib.auth.decorators import login_required
 from ticketsystem.utils import utils
 import imaplib
+from django.shortcuts import redirect
 # Create your views here.
 
 @login_required
@@ -286,11 +287,7 @@ def delete_email_view(request):
     M.logout()
 
     email.delete()
-
-    context = {
-        'subsection': "E-Mails moved to Trash",
-        }
-    return render(request, 'ticketsystem/unsorted_emails.html', context)
+    return redirect('dashboard')
 
 @login_required
 def notification_send_view(request):
