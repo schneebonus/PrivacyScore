@@ -1,6 +1,9 @@
 {% extends 'ticketsystem/layout.html' %}
 
 {% block content %}
+{% if emails|length == 0 %}
+You did not specify a receiver for the notification. Please go back and try again.
+{% else %}
 Notification has been send to:
 
 <ul>
@@ -11,5 +14,5 @@ Notification has been send to:
 
 {{ title }}<br>
 {{ body }}
-
+{% endif %}
 {% endblock %}

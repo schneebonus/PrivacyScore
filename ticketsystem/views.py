@@ -271,7 +271,7 @@ def notification_send_view(request):
     references = request.POST.get("references", "")
 
     # update state
-    if url is not "":
+    if url is not "" and len(emails) is not 0:
         issues = Issue.objects.filter(url=url)
         if answer_to is 0:
             state = State.objects.get(id=2)
@@ -310,7 +310,6 @@ def notification_send_view(request):
         s = smtplib.SMTP_SSL(host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
         s.login(fromaddr, settings.EMAIL_PASSWORD)
         msg["Message-ID"] = email_lib.make_msgid()
-
 
 
         mail = Mail(title=title, message_id=msg["Message-ID"], answered=True, direction=True, sender="PrivacyScore", receiver=toaddr, body=body, url = url)
