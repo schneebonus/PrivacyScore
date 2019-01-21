@@ -9,19 +9,22 @@
 {% endblock %}
 
 {% block content %}
-{% if sender != "PrivacyScore" %}
 <div class="col-xs-12 col-md-4 flex-last pull-right text-right">
+  {% if answered == False %}
   <form action="#" method="GET">
     <input type="submit" name="answered" value="Mark as answered" class="btn btn-primary btn-block">
     <input type="hidden" name="id" value="{{ id }}">
   </form>
+  {% endif %}
+  {% if url == "" %}
   <form action="{% url 'delete_email_view' %}" method="POST">
     {% csrf_token %}
     <input type="hidden" name="id" value="{{ id }}">
     <input type="submit" name="delete" value="Delete" class="btn btn-primary btn-block">
   </form>
+  {% endif %}
 </div>
-{% endif %}
+
 <div class="col-xs-12 col-md-8">
   <div class="row">
 <h3>Details</h3>

@@ -231,6 +231,7 @@ def email_view(request):
         'id': email.id,
         'url': email.url,
         'sender': email.sender,
+        'answered': email.answered,
         'receiver': email.receiver,
         'subject': email.title,
         'content': email.body,

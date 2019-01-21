@@ -11,8 +11,8 @@
           <a href="{% url 'issue' %}?id={{ id }}&action=restart" class="btn btn-primary btn-block">Allow Publication</a>
           {% else %}
           <a href="{% url 'issue' %}?id={{ id }}&action=prevent" class="btn btn-primary btn-block">Prevent Publication</a>
-          {% endif %}
           <a href="{% url 'issue' %}?id={{ id }}&action=extend" class="btn btn-primary btn-block">Publication + 2 Weeks</a>
+          {% endif %}
         </div>
     </div>
     <div class="col-xs-12 col-md-8">
