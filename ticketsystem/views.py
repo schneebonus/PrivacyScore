@@ -15,9 +15,10 @@ from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import email.utils as email_lib
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-
+@login_required
 def dashboard(request):
     all_issues = Issue.objects.all()
     pending_emails = Mail.objects.all().filter(answered=False)
@@ -53,7 +54,7 @@ def dashboard(request):
     }
     return render(request, 'ticketsystem/dashboard.html', context)
 
-
+@login_required
 def inject_testdata_view(request):
     problemclasses = ProblemClass.objects.all()
 
@@ -87,7 +88,7 @@ def inject_testdata_view(request):
     }
     return render(request, 'ticketsystem/inject_issue.html', context)
 
-
+@login_required
 def open_issue_list_view(request):
     search = request.GET.get('search', "")
     issues = Issue.objects.all()
@@ -112,7 +113,7 @@ def open_issue_list_view(request):
         }
     return render(request, 'ticketsystem/issue_list_view.html', context)
 
-
+@login_required
 def issue_view(request):
     id = request.GET['id']
     action = request.GET.get('action', "")
@@ -167,7 +168,7 @@ def issue_view(request):
         }
     return render(request, 'ticketsystem/issue_detail_view.html', context)
 
-
+@login_required
 def url_view(request):
     url = request.GET.get('url', "")
     issues = Issue.objects.all().filter(url=url)
@@ -187,7 +188,7 @@ def url_view(request):
 
     return render(request, 'ticketsystem/url_view.html', context)
 
-
+@login_required
 def email_view(request):
     id = request.GET.get('id', 0)
     answered = request.GET.get('answered', "")
@@ -238,17 +239,17 @@ def email_view(request):
         }
     return render(request, 'ticketsystem/email_detail_view.html', context)
 
-
+@login_required
 def closed_issue_list_view(request):
     context = {'subsection': "Closed Issues"}
     return render(request, 'ticketsystem/issue_list_view.html', context)
 
-
+@login_required
 def statistics_view(request):
     context = {'subsection': "Statistics"}
     return render(request, 'ticketsystem/statistics.html', context)
 
-
+@login_required
 def unsorted_emails_view(request):
     emails = Mail.objects.all().filter(url="")
 
@@ -258,6 +259,7 @@ def unsorted_emails_view(request):
         }
     return render(request, 'ticketsystem/unsorted_emails.html', context)
 
+@login_required
 def notification_send_view(request):
     receiver = request.POST.getlist('receiver')
     emails = [email for email in receiver if email is not ""]
@@ -326,6 +328,7 @@ def notification_send_view(request):
         }
     return render(request, 'ticketsystem/mail_send.html', context)
 
+@login_required
 def notification_view(request):
     id = request.GET.get('id', 0)
     if id is 0:
