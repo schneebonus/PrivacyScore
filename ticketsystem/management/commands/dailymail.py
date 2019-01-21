@@ -51,7 +51,7 @@ here is your daily privacyscore notification."""
         if len(pending_emails) > 0:
             body += """\n\nCurrently we have """ + \
                 str(len(pending_emails)) + \
-                """ incoming e-mails waiting for an answer:\n"""
+                """ e-mails waiting for an answer:\n"""
             for pemail in pending_emails:
                 body += "\t" + pemail.title + "\n"
                 if pemail.url != "":

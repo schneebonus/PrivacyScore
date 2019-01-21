@@ -104,7 +104,6 @@ class Command(BaseCommand):
                             filename = part.get_filename()
                             if filename is not None:
                                 attachments.append(filename)
-                        received_at = msg["Date"]
                         url = ""
 
                         regex_url = "^.*Schwachstellen auf Ihrer Webseite \( (.*\..*) \).*$"

@@ -336,18 +336,20 @@ def notification_view(request):
         # todo: send to error page
 
     issue = Issue.objects.get(id=id)
-    text = issue.problem_class.email_body
-    addresses = Address.objects.filter(issue=issue)
+    all_issues_for_url = Issue.objects.filter(url=issue.url)
+    addresses = set()
+    for i in all_issues_for_url:
+        addresses_of_issue = Address.objects.filter(issue=i)
+        for a in addresses_of_issue:
+            addresses.add(a)
 
     context = {
         'subsection': "Notification",
         'issue': {
             'id': issue.id,
             'url': issue.url,
-            'problemclass': issue.problem_class,
-            'title': "Schwachstellen auf Ihrer Webseite ( " + issue.url + " )",
-            'possible_addresses': [a.address for a in addresses],
-            'description': text,
+            'possible_addresses': {a.address for a in addresses},
+            'all_issues_for_url': all_issues_for_url,
             }
         }
     return render(request, 'ticketsystem/issue_notification_form.html', context)
