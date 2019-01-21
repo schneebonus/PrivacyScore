@@ -16,6 +16,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import email.utils as email_lib
 from django.contrib.auth.decorators import login_required
+from ticketsystem.utils import utils
+import imaplib
 # Create your views here.
 
 @login_required
@@ -256,6 +258,37 @@ def unsorted_emails_view(request):
     context = {
         'subsection': "Unsorted E-Mails",
         'emails': emails
+        }
+    return render(request, 'ticketsystem/unsorted_emails.html', context)
+
+
+@login_required
+def delete_email_view(request):
+    email_id = request.POST.get('id', "0")
+    email = Mail.objects.all().get(id=email_id)
+    uid = email.sequence
+
+    M = imaplib.IMAP4_SSL(settings.EMAIL_IMAP_SERVER, settings.EMAIL_IMAP_PORT)
+    M.login(settings.EMAIL_USERNAME, settings.EMAIL_PASSWORD)
+    print(M.list()[1])
+    M.select("INBOX", False)
+
+    typ, data = M.search(None, 'ALL')
+    for num in data[0].split():
+        tmp, uid_num = M.fetch(num, '(UID)')
+        uid_num = utils.extract_uid(uid_num)
+        print(type(uid_num), type(uid))
+        if str(uid_num) == str(uid):
+            M.store(num, '+FLAGS', '\\Deleted')
+    M.expunge()
+
+    M.close()
+    M.logout()
+
+    email.delete()
+
+    context = {
+        'subsection': "E-Mails moved to Trash",
         }
     return render(request, 'ticketsystem/unsorted_emails.html', context)
 

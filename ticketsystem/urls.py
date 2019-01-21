@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^notification_send$', views.notification_send_view, name="send"),
     url(r'^unsorted_emails$', views.unsorted_emails_view, name="unsorted_emails"),
     url(r'^url$', views.url_view, name="url_view"),
+    url(r'^delete_email$', views.delete_email_view, name="delete_email_view"),
 ]
