@@ -7,41 +7,58 @@
         <div class="text-left">
           <input type="submit" value="Re-scan" class="btn btn-primary btn-block">
           <input type="submit" value="Notify (again)" class="btn btn-primary btn-block">
-          <input type="submit" value="Prevent publication" class="btn btn-primary btn-block">
-          <input type="submit" value="Postpone publication by two weeks" class="btn btn-primary btn-block">
+          {% if prevent_publication %}
+          <a href="{% url 'issue' %}?id={{ id }}&action=restart" class="btn btn-primary btn-block">Allow Publication</a>
+          {% else %}
+          <a href="{% url 'issue' %}?id={{ id }}&action=prevent" class="btn btn-primary btn-block">Prevent Publication</a>
+          <a href="{% url 'issue' %}?id={{ id }}&action=extend" class="btn btn-primary btn-block">Publication + 2 Weeks</a>
+          {% endif %}
         </div>
-        <br><br>
-        <div class="text-left">
-          <h4>History</h4>
-          <table class="table table-striped table-bordered table-hover">
-            {% for event in history %}
-            <tr>
-              <td>{{ event.date }}</td>
-              <td>{{ event.description }}</td>
-            </tr>
-            {% endfor %}
-          </table>
-      </div>
     </div>
     <div class="col-xs-12 col-md-8">
       <h3>Basic-Data</h3>
-      <b>ID:</b><br>{{ id }}<br>
       <b>URL:</b><br><a href="#">{{ url }}</a><br>
       <b>Problem:</b><br>
       {{ description }}<br>
       <b>Current Status:</b><br>{{ status }}<br>
-      <b>Publication Date:</b><br>{{ publication_date }}
-      <br><br>
-
-      <h3>Communication</h3>
-      {% if more_issues_for_url|length > 0 %}
-          <ul>
-        {% for email in emails %}
-          <li><a href="{% url 'email' %}?id=something">{{ email.subject }}</a></li>
-        {% endfor %}
-        </ul>
+      <b>Publication Date:</b><br>
+      {% if prevent_publication %}
+      Prevented
+      {% else %}
+      {{ publication_date }}
       {% endif %}
-      {% if more_issues_for_url|length == 0 %}
+      <br><br>
+      <div class="text-left">
+        {% if history|length > 0 %}
+        <h4>History</h4>
+        <table class="table table-striped table-bordered table-hover">
+          <tr>
+            <th>Date</th>
+            <th>Action</th>
+            <th>Operator</th>
+          </tr>
+          {% for event in history %}
+          <tr>
+            <td>{{ event.date }}</td>
+            <td>
+              {{ event.description }}
+              {% if event.comment != "None" %}
+              <br>{{ event.comment }}
+              {% endif %}
+            </td>
+            <td>{{ event.operator }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+        {% endif %}
+    </div>
+
+    <br><br>
+      <h3>Communication</h3>
+      {% if emails|length > 0 %}
+          {% include "ticketsystem/email_table.html" %}
+      {% endif %}
+      {% if emails|length == 0 %}
         The provider has not yet been informed about the problem.<br>
         The contact email must still be checked and confirmed by a human.<br>
         This process can be done <a href="{% url 'notification' %}?id={{ id }}">here</a>.

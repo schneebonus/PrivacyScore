@@ -1,0 +1,14 @@
+{% extends 'ticketsystem/layout.html' %}
+
+{% block content %}
+
+<h4>The following emails are not linked to any issue or url.</h4>
+<ul>
+
+{% for email in emails %}
+
+<li><a href="{% url 'email' %}?id={{ email.id }}">{{ email.title }}</a></li>
+
+{% endfor %}
+</ul>
+{% endblock %}

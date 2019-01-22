@@ -18,12 +18,14 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.urls import path
+from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     path(r'i18n/', include('django.conf.urls.i18n')),
     path('ticketsystem/', include('ticketsystem.urls')),
+    path('accounts/login/', auth_views.LoginView.as_view()),
     #url(r'^api/', include('privacyscore.api.urls')),
     url(r'^', include('privacyscore.frontend.urls')),
 ]

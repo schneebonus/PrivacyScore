@@ -1,0 +1,14 @@
+{% extends 'ticketsystem/layout.html' %}
+
+{% block content %}
+{% if emails|length == 0 %}
+<div class="alert alert-danger" role="alert">
+  <h4 class="alert-heading">Error</h4>
+  <p class="mb-0">You did not specify a receiver for the notification. Please go back and try again.</p>
+</div>
+{% else %}
+<div class="alert alert-success" role="alert">
+  <h4 class="alert-heading">Success</h4>
+</div>
+{% endif %}
+{% endblock %}

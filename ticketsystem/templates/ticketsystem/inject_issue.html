@@ -1,0 +1,38 @@
+{% extends 'ticketsystem/layout.html' %}
+
+{% block content %}
+
+{% if got_request %}
+<div class="alert alert-success">
+  <strong>Success!</strong> New issue has been created.
+</div>
+{% endif %}
+
+<form action="#" method="POST">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <td>URL:</td>
+      <td><input type="text" name="url" /></td>
+    </tr>
+    <tr>
+      <td>Contacts (E-Mails - separated by "; "):</td>
+      <td><input type="text" name="emails" /></td>
+    </tr>
+    <tr>
+      <td>Problemclass:</td>
+      <td>
+        <select name="problemclass">
+        {% for class in classes %}
+         <option value="{{ class.id }}">{{ class.title }}</option>
+        {% endfor %}
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><input type="submit" value="Create" name="Create"></td>
+    <tr>
+  </table>
+</form>
+{% endblock %}
