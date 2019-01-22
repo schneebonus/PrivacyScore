@@ -212,7 +212,6 @@ def email_view(request):
     issues_for_url = []
     if email.url != "":
         issues_for_url = Issue.objects.filter(url=email.url)
-    print(issues_for_url)
 
     attachments = [att.filename for att in Attachment.objects.all().filter(mail=email)]
     urls = {issue.url for issue in Issue.objects.all()}
