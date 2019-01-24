@@ -18,3 +18,4 @@ pygments
 datetime
 pytz
 bleach
+selenium
