@@ -13,7 +13,7 @@ import chardet
 from email.header import decode_header
 from ticketsystem.models import Attachment
 from django.conf import settings
-import bleach
+#import bleach
 import email.parser
 
 class Command(BaseCommand):

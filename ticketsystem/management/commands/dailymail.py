@@ -11,7 +11,7 @@ from ticketsystem.models import HistoryElement
 from ticketsystem.models import DailyNotificationSubscriber
 from ticketsystem.models import State
 from django.conf import settings
-import bleach
+# import bleach
 import smtplib
 from django.conf import settings
 import pytz
