@@ -69,7 +69,7 @@ here is your daily privacyscore notification."""
             print("DailyMail not required (nothing to do)")
         else:
             body += "\nSo long and thanks for all the fish,\n\nDaily Notification Cronjob"
-            msg.attach(MIMEText(body, 'utf-8'))
+            msg.attach(MIMEText(body, 'plain'))
 
             s = smtplib.SMTP_SSL(
                 host=settings.EMAIL_SMTP_SERVER, port=settings.EMAIL_SMTP_PORT)
