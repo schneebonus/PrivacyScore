@@ -63,17 +63,17 @@ table.dataTable thead .sorting_desc_disabled
 </div>
 <div class="row">
     <div class="col-sm-8">
-        
+
         <div style="background-color: #888; width: 100%; padding: 8px 12px 6px 12px; color: #ccc; font-size: 90%">
             <span>SCAN <span style="color:white">#{{ num_scans }}</span>
             </span>
             <span class="pull-right"><span>LAST SCAN</span>&nbsp; <span style="color: white">{{ site.last_scan.start|date:"Y-m-d @ H:i" }} – {{ site.last_scan.end|date:"H:i" }}</span></span></div>
-        
+
         <div class="group-box" style="border: 2px solid #888; background: #eee">
             {% with r=site.evaluated.rating.rating %}
             <div class="text-center" style="font-size: 1em; line-height: 1.2em; font-weight: 700;">
                 <div><small>OVERALL RATING</small><br>
-                
+
                     {% if r == 'doubleplusgood' %}
                         <i class="fa fa-5x fa-star-o color-{{ r }}"></i>
                     {% elif r == 'good' %}
@@ -89,14 +89,14 @@ table.dataTable thead .sorting_desc_disabled
                     {% else  %}
                         {{ r }}
                     {% endif %}
-                
+
                 </div>
             </div>
             {% endwith %}
             <div class="spacer"></div>
 
             <div class="row">
-                
+
             {% for group, rating in site.evaluated %}
                 <div class="col-xs-6 col-sm-3 text-center" style="font-size: 1em; line-height: 1.2em; font-weight: 700;">
                 {% if rating %}
@@ -145,7 +145,7 @@ table.dataTable thead .sorting_desc_disabled
 
     </div>
     <div class="col-sm-4">
-        
+
         {% if site.scannable == site.SCAN_OK %}
         <form method="POST" action="{% url 'frontend:scan_site' site.pk %}">
             {% csrf_token %}
@@ -159,7 +159,7 @@ table.dataTable thead .sorting_desc_disabled
         {% if site.scannable == site.SCAN_OK %}
         </form>
         {% endif %}
-    
+
         {% if scan_running %}
             <h3 class="text-center"><small class="text-primary">SCAN IN PROGRESS</small></h3>
             <div class="text-center">
@@ -177,18 +177,18 @@ table.dataTable thead .sorting_desc_disabled
                 <h3 class="text-center color-neutral"><smalL>RE-SCAN NOT AVAILABLE YET</small></h3>
             {% endif %}
         {% endif %}
-        
+
         <div class="spacer"></div>
         <div class="spacer"></div>
-        
+
         <p>
             <a class="btn btn-default"
             href="{% url 'frontend:site_result_json' site.pk %}" style="width:100%;">
                 {% trans "Download Results as JSON" %}
             </a>
         </p>
-        
-        
+
+
     </div>
 </div>
 
@@ -201,7 +201,7 @@ table.dataTable thead .sorting_desc_disabled
 	    <div class="alert alert-danger">{% trans "<b>This site is excluded from further scans.</b> The owner of this website has asked us to not perform further scans. For reasons of transparency we display the results of the last scan before we received the request of the owner. The owner may have implemented changes in the meantime, which are not reflected in the results below." %}
 		</div>
             {% endif %}
-            
+
             {% if not scan_running %}
             <div class="col-sm-6">
                 <p><small>ANALYZED URL AFTER LOADING:</small><br>
@@ -273,23 +273,75 @@ table.dataTable thead .sorting_desc_disabled
 			</div>
 
 			<div class="col-sm-12">
-                
-                
+                <div class="spacer"></div>
+                <h3 class="jump-section" id="jump-section-disclosure">Disclosure: Reported Vulnerabilities</h3>
+                <!-- panel group begin -->
+                <div class="panel-group" id="accordion-disclosure"
+                    role="tablist" aria-multiselectable="true">
+                {% for issue in public_issues %}
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="disclosure-{{ outerCounter }}">
+                          <h3 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion3" href="#collapse3_1" aria-expanded="true" aria-controls="collapse3_1" class="">
+                                  <div class="row" style="display: flex; align-items: center;">
+                                      <div class="col col-xs-1" style="text-align:center">
+                                          <i class="fa fa-3x fa-check-circle color-good"></i>
+                                      </div>
+                                      <div class="col col-xs-10">
+                                            <span class="label pull-right label-info label-color-unreliable">
+                                                reliable
+                                            </span>
+                                            <span class="pull-right">&nbsp;</span>
+                                            <p><strong>Reported: {{ issue.problemclass }} ( {{ issue.fixed }} )</strong></p>
+                                            <div>
+                                                On {{ issue.known_since }} the PrivacyScore-Scanners found: {{ issue.problemclass }}
+                                            </div>
+                                      </div>
+                                      <div class="col col-xs-1 text-center">
+                                          <i class="more-less glyphicon glyphicon-menu-up" style="color:gray"></i>
+                                          </div>
+                                      </div>
+                                  </a>
+                            </h3>
+                        </div>
+                        <div id="collapse3_1" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading3_1" aria-expanded="true" style="">
+                            <div class="panel-body">
+                              <div class="row" style="display: flex; align-items: center;">
+                                  <div class="col col-sm-1" style="text-align:center">
+                              </div>
+                              <div class="col col-sm-11">
+                                <p>
+                                  This vulnerability has been published on {{ issue.published_since }}.
+                                </p>
+                                <span class="pull-right">Result wrong?&nbsp;
+                                    <a class="btn btn-default btn-sm" href="mailto:privacyscore.psi@uni-bamberg.de?subject=ERROR-REPORT&amp;body=I%20want%20to%20report%20an%20error%20about%20the%20following%20scan%20and%20check%3A%20http%3A//f5w.de/%20%5B2019-01-26%2000%3A52%3A55%5D%20-%20The%20site%20does%20not%20disclose%20internal%20system%20information%20at%20usual%20paths.">
+                                        report error
+                                    </a></span>
+                              </div>
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+                {% endfor %}
+                </div>
+              </div>
+
                 {% for group, descriptions in groups_descriptions %}
                 {% with forloop.counter as outerCounter %}
-                
+
                 <div class="spacer"></div>
                 <h3 class="jump-section" id="jump-section-{{ outerCounter }}">{{ group }}</h3>
-                
+
                 <!-- panel group begin -->
                 <div class="panel-group" id="accordion{{ outerCounter }}"
                     role="tablist" aria-multiselectable="true">
                     <!-- panel group end -->
-                
+
                     {% for description, title, longdesc, labels, details_list, rating in descriptions %}
                     {% with forloop.counter as innerCounter %}
                     <!--<p class="description-{{ classification }}">{{ description }}</p>-->
-                    
+
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab"
                             id="heading{{ outerCounter }}_{{ innerCounter }}">
@@ -299,10 +351,10 @@ table.dataTable thead .sorting_desc_disabled
                                     href="#collapse{{ outerCounter }}_{{ innerCounter }}"
                                     aria-expanded="true"
                                     aria-controls="collapse{{ outerCounter }}_{{ innerCounter }}">
-                                    
+
                                     <div class="row" style="display: flex; align-items: center;">
                                         <div class="col col-xs-1" style="text-align:center">
-                                            
+
                                 {% if rating.rating == 'doubleplusgood' %}
                                     <i class="fa fa-3x fa-star-o color-{{ rating }}"></i>
                                 {% elif rating.rating == 'good' %}
@@ -311,7 +363,7 @@ table.dataTable thead .sorting_desc_disabled
                                     <i class="fa fa-3x fa-exclamation-circle color-{{ rating }}"></i>
                                 {% elif rating.rating == 'bad' %}
                                 {% comment %}
-                                     Making an exception and showing the circle (instead 
+                                     Making an exception and showing the circle (instead
                                      of exclamationamrk) here. This is intentional so that it
                                      matches the group ratings above. Exclamation mark is only
                                      used to convey "total failure in a category".
@@ -326,7 +378,7 @@ table.dataTable thead .sorting_desc_disabled
                                     <!-- {{ rating.rating }}-->
 
                                 {% endif %}
-                                            
+
                                         </div>
                                         <div class="col col-xs-10">
                                             {% for label in labels %}
@@ -335,7 +387,7 @@ table.dataTable thead .sorting_desc_disabled
                                             </span>
                                             <span class="pull-right">&nbsp;</span>
                                             {% endfor %}
-                                            
+
                                             {% if title %}
                                             <p><strong>{{ title }}</strong>
                                             </p>
@@ -349,7 +401,7 @@ table.dataTable thead .sorting_desc_disabled
                                             glyphicon-menu-down" style="color:gray"></i>
                                         </div>
                                     </div>
-                                    
+
                                 </a>
                             </h3>
                         </div>
@@ -357,14 +409,14 @@ table.dataTable thead .sorting_desc_disabled
                              class="panel-collapse collapse" role="tabpanel"
                              aria-labelledby="heading{{ outerCounter }}_{{ innerCounter }}">
                             <div class="panel-body">
-                                
+
                                 <div class="row" style="display: flex; align-items: center;">
                                     <div class="col col-sm-1" style="text-align:center">
                                     </div>
                                     <div class="col col-sm-11">
 
                                         {{ longdesc|default:'<p>The explanation for this check is not available yet. Sorry!</p><p><span class="label label-warning">coming soon!</span></p>'|safe }}
-                                        
+
                                         <span class="pull-right">Result wrong?&nbsp;
                                         <a class="btn btn-default btn-sm" href="mailto:privacyscore.psi@uni-bamberg.de?subject=ERROR-REPORT&amp;body={{ "I want to report an error about the following scan and check: "|urlencode}}{{ site.url|urlencode }}{{ site.last_scan.end|date:" [Y-m-d H:i:s]"|urlencode }}{{ " - "|urlencode }}{{ description|urlencode }}">
                                                 report error
@@ -394,23 +446,23 @@ table.dataTable thead .sorting_desc_disabled
                     </div>
                     {% endwith %}
                     {% endfor %}
-                  
+
                 </div>
                 {% endwith %}
                 <div class="spacer"></div>
                 {% endfor %}
-                
-                
+
+
             </div>
         </div>
     </div>
     <div class="col-xs-12 col-sm-4 col-md-4 text-center">
-        
+
         <p class="text-center">
             <small>ON PRIVACYSCORE SINCE</small><br>{{ site.created|date:"Y-m-d" }}
         </p>
-        
-        
+
+
         <div class="group-box" style="padding:5px; margin-bottom: 20px; width:70%; margin-left:auto;margin-right:auto;">
         {% if site.has_screenshot %}
         <img src="{% url 'frontend:site_screenshot' site.pk %}" class="screenshot" style="width:100%; " />
@@ -418,8 +470,8 @@ table.dataTable thead .sorting_desc_disabled
         <div style="padding: 4em; color: gray"><em>no screenshot available at the moment</em></div>
         {% endif %}
         </div>
-        
-        <p>REFERENCED IN 
+
+        <p>REFERENCED IN
             {% blocktrans count counter=scan_lists.count %}
                 {{ counter }} LIST
             {% plural %}
@@ -435,7 +487,7 @@ table.dataTable thead .sorting_desc_disabled
             </a>
             {% endfor %}
         </div>
-        
+
     </div>
 
 </div>

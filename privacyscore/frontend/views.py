@@ -32,10 +32,15 @@ from privacyscore.frontend.forms import SingleSiteForm, CreateListForm
 from privacyscore.frontend.models import Spotlight
 from privacyscore.utils import normalize_url
 
+from ticketsystem.models import Issue
+from ticketsystem.models import State
+from ticketsystem.models import HistoryElement
+
 
 def index(request: HttpRequest) -> HttpResponse:
     scan_form = SingleSiteForm()
-    spotlights = Spotlight.objects.filter(is_visible=True).order_by('order_key')
+    spotlights = Spotlight.objects.filter(
+        is_visible=True).order_by('order_key')
     return render(request, 'frontend/index.html', {
         'scan_form': scan_form,
         'spotlights': spotlights
@@ -51,15 +56,14 @@ def browse(request: HttpRequest) -> HttpResponse:
     search = request.GET.get('search')
     if search:
         scan_lists = scan_lists.filter(
-            Q(name__icontains=search) |
-            Q(description__icontains=search) |
-            Q(tags__name__icontains=search)).distinct()
+            Q(name__icontains=search)
+            | Q(description__icontains=search)
+            | Q(tags__name__icontains=search)).distinct()
     tags = request.GET.get('tags')
     if tags:
         tags = tags.split()
         for tag in tags:
             scan_lists = scan_lists.filter(tags__name__iexact=tag)
-
 
     paginator = Paginator(scan_lists, settings.SCAN_LISTS_PER_PAGE)
     page = request.GET.get('page')
@@ -69,8 +73,8 @@ def browse(request: HttpRequest) -> HttpResponse:
         scan_lists = paginator.page(1)
 
     return render(request, 'frontend/browse.html', {
-        'popular_tags': ListTag.objects.annotate_scan_lists__count() \
-            .order_by('-scan_lists__count')[:10],
+        'popular_tags': ListTag.objects.annotate_scan_lists__count()
+        .order_by('-scan_lists__count')[:10],
         'scan_lists': scan_lists,
     })
 
@@ -134,8 +138,8 @@ def scan_list(request: HttpRequest) -> HttpResponse:
                                 continue
                             known_urls.add(url)
                             ListColumnValue.objects.create(column=column,
-                                site=sites[row_no],
-                                value=row[i + 1])
+                                                           site=sites[row_no],
+                                                           value=row[i + 1])
 
                     # tags
                     tags_to_add = set()
@@ -154,8 +158,8 @@ def scan_list(request: HttpRequest) -> HttpResponse:
         'table': table,
         'invalid_rows': invalid_rows,
         'csv_data': csv_data,
-        'popular_tags_str': ', '.join(t.name for t in ListTag.objects.annotate_scan_lists__count() \
-            .order_by('-scan_lists__count')[:10]),
+        'popular_tags_str': ', '.join(t.name for t in ListTag.objects.annotate_scan_lists__count()
+                                      .order_by('-scan_lists__count')[:10]),
     })
 
 
@@ -166,6 +170,7 @@ def scan_list_created(request: HttpRequest, token: str) -> HttpResponse:
         'scan_list': scan_list,
         'num_scanning_sites': num_scanning_sites
     })
+
 
 def scan_site_created(request: HttpRequest, site_id: int) -> HttpResponse:
     site = get_object_or_404(Site, pk=site_id)
@@ -181,20 +186,20 @@ def scan_scan_list(request: HttpRequest, scan_list_id: int) -> HttpResponse:
     scan_list = get_object_or_404(
         ScanList.objects.prefetch_related(Prefetch(
             'sites',
-            queryset=Site.objects.select_related('last_scan') \
-                .annotate_most_recent_scan_start() \
+            queryset=Site.objects.select_related('last_scan')
+                .annotate_most_recent_scan_start()
                 .annotate_most_recent_scan_end_or_null())
         ), pk=scan_list_id)
     was_any_site_scannable = scan_list.scan()
     if was_any_site_scannable:
         num_scanning_sites = Scan.objects.filter(end__isnull=True).count()
         messages.success(request,
-            _("Scans for this list have been scheduled. "+ \
-              "The total number of sites in the scanning queue "+ \
-              "is %i (including yours)." % num_scanning_sites))
+                         _("Scans for this list have been scheduled. "
+                           + "The total number of sites in the scanning queue "
+                           + "is %i (including yours)." % num_scanning_sites))
     else:
         messages.warning(request,
-            _('All sites have been scanned recently. Please wait 30 minutes and try again.'))
+                         _('All sites have been scanned recently. Please wait 30 minutes and try again.'))
 
     return redirect(reverse('frontend:view_scan_list', args=(scan_list_id,)))
 
@@ -225,7 +230,8 @@ def view_scan_list(request: HttpRequest, scan_list_id: int, format: str = 'html'
 
 
 def render_scan_list_cachable(request: HttpRequest, scan_list, format: str = 'html'):
-    column_choices = [(None, _('- None -'))] + list(enumerate(x.name for x in scan_list.ordered_columns))
+    column_choices = [(None, _('- None -'))] + \
+        list(enumerate(x.name for x in scan_list.ordered_columns))
 
     class ConfigurationForm(forms.Form):
         categories = forms.CharField(required=False, widget=forms.HiddenInput)
@@ -250,8 +256,8 @@ def render_scan_list_cachable(request: HttpRequest, scan_list, format: str = 'ht
         category = category.strip()
         if category in RESULT_GROUPS:
             category_order.append(category)
-    if (set(category_order) != set(RESULT_GROUPS.keys()) or
-            len(category_order) != len(RESULT_GROUPS)):
+    if (set(category_order) != set(RESULT_GROUPS.keys())
+            or len(category_order) != len(RESULT_GROUPS)):
         category_order = DEFAULT_GROUP_ORDER
     if ','.join(category_order) != request.GET.get('categories'):
         url_params = request.GET.copy()
@@ -297,10 +303,13 @@ def render_scan_list_cachable(request: HttpRequest, scan_list, format: str = 'ht
 
     if sort_by is not None:
         sites = list(sites)
-        sites.sort(key=_get_sorting_fn(sites, sort_by), reverse=sort_dir == 'desc')
+        sites.sort(key=_get_sorting_fn(sites, sort_by),
+                   reverse=sort_dir == 'desc')
 
-    blacklisted_sites = [site for site in sites if site.scannable() == Site.SCAN_BLACKLISTED]
-    sites = [site for site in sites if site.scannable() != Site.SCAN_BLACKLISTED]
+    blacklisted_sites = [
+        site for site in sites if site.scannable() == Site.SCAN_BLACKLISTED]
+    sites = [site for site in sites if site.scannable() !=
+             Site.SCAN_BLACKLISTED]
 
     groups = None
     group_attr = None
@@ -353,7 +362,8 @@ def render_scan_list_cachable(request: HttpRequest, scan_list, format: str = 'ht
         for site_no, site in _enumerate_sites(sites, start=1):
             columns = [site_no, site.url]
             columns += [x.value for x in site.ordered_column_values]
-            columns += [rating.group_rating.rating for group, rating in site.evaluated]
+            columns += [rating.group_rating.rating for group,
+                        rating in site.evaluated]
             columns += [''] * (len(header) - len(columns))
             writer.writerow(columns)
         return resp
@@ -383,8 +393,8 @@ def _enumerate_sites(sites: Iterable, start: int = 1) -> Iterable:
     num = start
     previous_evaluation = None
     for site in sites:
-        if (previous_evaluation is not None and
-                previous_evaluation == site.evaluated):
+        if (previous_evaluation is not None
+                and previous_evaluation == site.evaluated):
             # Has same rank as previous site
             num -= 1
         previous_evaluation = site.evaluated
@@ -456,11 +466,11 @@ def _get_sorting_fn(sites, column_index):
     }[sorting_type](site.ordered_column_values[column_index].value)
 
 
-
 def _calculate_ratings_count(sites):
     # TODO: use ordered dict and sort by rating ordering
     # for now, frontend template can just use static ordering of all available ratings
-    ratings_count = dict(Counter(site.evaluated.rating.rating for site in sites))
+    ratings_count = dict(
+        Counter(site.evaluated.rating.rating for site in sites))
     for rating in ('good', 'bad', 'warning', 'critical', 'neutral'):
         if rating not in ratings_count:
             ratings_count[rating] = 0
@@ -484,8 +494,8 @@ def site_screenshot(request: HttpRequest, site_id: int) -> HttpResponse:
 def view_site(request: HttpRequest, site_id: int) -> HttpResponse:
     """View a site and its most recent scan result (if any)."""
     site = get_object_or_404(
-        Site.objects.annotate_most_recent_scan_start() \
-            .annotate_most_recent_scan_end_or_null() \
+        Site.objects.annotate_most_recent_scan_start()
+            .annotate_most_recent_scan_end_or_null()
             .annotate_most_recent_scan_result(), pk=site_id)
     site.views = F('views') + 1
     site.save(update_fields=('views',))
@@ -499,10 +509,10 @@ def view_site(request: HttpRequest, site_id: int) -> HttpResponse:
         results = site.last_scan__result
         category_order = DEFAULT_GROUP_ORDER
         site.evaluated = site.evaluate(category_order)[0]
-    
+
     # store other attributes needed to show
     res = {}
-    
+
     res['final_url'] = results.get('final_url', '–')
     res['final_https_url'] = results.get('final_https_url')
 
@@ -510,20 +520,44 @@ def view_site(request: HttpRequest, site_id: int) -> HttpResponse:
         mxrec = results.get('mx_records')[0][1]
     else:
         mxrec = _('(no mx records found or scan not finished)')
-     
+
     res['mx_record'] = mxrec
-    
+
     res['reachable'] = results.get('reachable')
     res['dns_error'] = results.get('dns_error')
     res['http_error'] = results.get('http_error')
     res['https_error'] = results.get('https_error')
-    
+
+    # get data from ticketsystem
+    issues = Issue.objects.all().filter(url=res['final_url'])
+    public_issues = []
+
+    for issue in issues:
+        # if ready for publication
+        if issue.publication > datetime.now(pytz.utc) and issue.prevent_publication is False:
+            known_since = issue.historyelement_set.all().first().date
+            published_since = issue.publication
+            problem_class = issue.problem_class.title
+            all_history_elements = issue.historyelement_set.all()
+            issue_fixed = False
+            for history_element in all_history_elements:
+                if history_element.state.title == "Fixed":
+                    issue_fixed = True
+            issue_summary = {
+                'fixed': issue_fixed,
+                'known_since': known_since,
+                'published_since': published_since,
+                'problem_class': problem_class,
+            }
+            public_issues.append(issue_summary)
+
     return render(request, 'frontend/view_site.html', {
         'site': site,
         'res': res,
         'scan_lists': scan_lists,
         'scan_running': Scan.objects.filter(site=site, end__isnull=True).exists(),
         'num_scans': num_scans,
+        'public_issues': public_issues,
         # TODO: groups not statically
         'groups_descriptions': (
             (RESULT_GROUPS[group]['name'], val) for group, val in
@@ -537,7 +571,7 @@ def scan_site(request: HttpRequest, site_id: Union[int, None] = None) -> HttpRes
     """Schedule the scan of a site."""
     if site_id:
         site = get_object_or_404(
-            Site.objects.annotate_most_recent_scan_start() \
+            Site.objects.annotate_most_recent_scan_start()
             .annotate_most_recent_scan_end_or_null(),
             pk=site_id)
     else:
@@ -545,7 +579,7 @@ def scan_site(request: HttpRequest, site_id: Union[int, None] = None) -> HttpRes
         form = SingleSiteForm(request.POST)
         if form.is_valid():
             site, created = Site.objects.annotate_most_recent_scan_start() \
-            .annotate_most_recent_scan_end_or_null().get_or_create(
+                .annotate_most_recent_scan_end_or_null().get_or_create(
                 url=form.cleaned_data.get('url'))
             if created:
                 site.last_scan__end_or_null = None
@@ -556,31 +590,33 @@ def scan_site(request: HttpRequest, site_id: Union[int, None] = None) -> HttpRes
             })
     status_code = site.scan()
     if status_code == Site.SCAN_OK:
-        if not site_id: # if the site is new we want to show the dog
+        if not site_id:  # if the site is new we want to show the dog
             return redirect(reverse('frontend:scan_site_created', args=(site.pk,)))
         else:
             num_scanning_sites = Scan.objects.filter(end__isnull=True).count()
             messages.success(request,
-                _("A scan of the site has been scheduled. "+ \
-                  "The total number of sites in the scanning queue "+ \
-                  "is %i (including yours)." % num_scanning_sites))
+                             _("A scan of the site has been scheduled. " +
+                               "The total number of sites in the scanning queue "
+                               + "is %i (including yours)." % num_scanning_sites))
             return redirect(reverse('frontend:view_site', args=(site.pk,)))
     elif status_code == Site.SCAN_COOLDOWN:
         messages.warning(request,
-            _('The site is already scheduled for scanning or it has been scanned recently. No scan was scheduled.'))
+                         _('The site is already scheduled for scanning or it has been scanned recently. No scan was scheduled.'))
     elif status_code == Site.SCAN_BLACKLISTED:
         messages.warning(request,
-            _('The operator of this website requested to be blacklisted, scanning this website is not possible, sorry.'))
+                         _('The operator of this website requested to be blacklisted, scanning this website is not possible, sorry.'))
     return redirect(reverse('frontend:view_site', args=(site.pk,)))
 
 
 def scan_list_csv(request: HttpRequest, scan_list_id: int) -> HttpResponse:
-    scan_list = get_object_or_404(ScanList.objects.prefetch_columns(), pk=scan_list_id)
+    scan_list = get_object_or_404(
+        ScanList.objects.prefetch_columns(), pk=scan_list_id)
     resp = HttpResponse(content_type='text/csv')
     writer = csv.writer(resp, dialect='excel', delimiter=';')
     writer.writerow(['URL'] + [col.name for col in scan_list.ordered_columns])
     for site in scan_list.sites.prefetch_column_values(scan_list):
-        writer.writerow([site.url] + [col.value for col in site.ordered_column_values])
+        writer.writerow(
+            [site.url] + [col.value for col in site.ordered_column_values])
     return resp
 
 
@@ -595,18 +631,21 @@ def site_result_json(request: HttpRequest, site_id: int) -> HttpResponse:
         except:
             return render(request, 'frontend/site_result_json.html', {'site': site, 'highlighted_code': 'Incorrect timestamp format'})
         try:
-            scan = Scan.objects.filter(site=site).filter(end__lte=timestamp).order_by('-end').first()
+            scan = Scan.objects.filter(site=site).filter(
+                end__lte=timestamp).order_by('-end').first()
             scan_result = ScanResult.objects.get(scan=scan).result
         except Exception as e:
             scan_result = None
     else:
-        site = get_object_or_404(Site.objects.annotate_most_recent_scan_result(), pk=site_id)
+        site = get_object_or_404(
+            Site.objects.annotate_most_recent_scan_result(), pk=site_id)
         scan_result = site.last_scan__result if site.last_scan__result else {}
     if 'raw' in request.GET:
         return JsonResponse(scan_result)
     code = json.dumps(scan_result, indent=2)
     if scan_result is not None:
-        highlighted_code = mark_safe(highlight(code, JsonLexer(), HtmlFormatter()))
+        highlighted_code = mark_safe(
+            highlight(code, JsonLexer(), HtmlFormatter()))
     else:
         highlighted_code = 'No scan data found for these parameters'
     return render(request, 'frontend/site_result_json.html', {
@@ -638,11 +677,13 @@ def code(request: HttpRequest):
 def team(request: HttpRequest):
     return render(request, 'frontend/team.html')
 
+
 def privacypolicy(request: HttpRequest):
     return render(request, 'frontend/privacypolicy.html')
 
+
 def faq(request: HttpRequest):
-    num_scans  = Site.objects.filter(scans__isnull=False).count()
+    num_scans = Site.objects.filter(scans__isnull=False).count()
     num_scanning_sites = Scan.objects.filter(end__isnull=True).count()
 
     # query = '''SELECT
@@ -653,11 +694,11 @@ def faq(request: HttpRequest):
     #         FROM backend_site
     #         WHERE backend_site.last_scan_id IS NOT NULL)
     #     AND jsonb_array_length("result"->'leaks') > 0'''
-    # 
+    #
     # with connection.cursor() as cursor:
     #     cursor.execute(query)
     #     num_sites_failing_serverleak = cursor.fetchone()[0]
-        
+
     return render(request, 'frontend/faq.html', {
         'num_scanning_sites': num_scanning_sites,
         'num_scans':  num_scans,

@@ -11,6 +11,10 @@ from requests.exceptions import ConnectionError
 from requests.models import Response
 from concurrent.futures import ThreadPoolExecutor
 
+from ticketsystem.models import Issue
+from ticketsystem.models import State
+from ticketsystem.models import HistoryElement
+
 
 test_name = 'serverleak'
 test_dependencies = []
@@ -165,7 +169,7 @@ def test_site(url: str, previous_results: dict) -> Dict[str, Dict[str, Union[str
                 if  match_url not in response.url:
                     # There has been a redirect.
                     continue
-                
+
                 raw_requests[trial] = {
                     'mime_type': 'application/json',
                     'data': _response_to_json(response),
@@ -179,7 +183,7 @@ def test_site(url: str, previous_results: dict) -> Dict[str, Dict[str, Union[str
 def process_test_data(raw_data: list, previous_results: dict) -> Dict[str, Dict[str, object]]:
     leaks = []
     result = {}
-    
+
     url = None
     if 'url' in raw_data:
         url = raw_data['url']['data'].decode()
@@ -209,6 +213,30 @@ def process_test_data(raw_data: list, previous_results: dict) -> Dict[str, Dict[
                 if pattern(response['text']):
                     leaks.append(trial)
 
+
+    # check for fixed problems:
+    # leaks in previous_results but not in leaks any more
+    old_leaks = previous_results['leaks']
+    for old_leak in old_leaks:
+        if old_leak not in leaks:
+            # Leak from previous scan seems to be fixed.
+            # Time to close the issue.
+
+            # ToDo: identify the leak by its problem class and trial
+            issue.close()
+
+    for leak in leaks:
+        if leak not in old_leaks:
+            # new leak appeared. Time to create an issue.
+            # now it is time to create an issue for the ticketsystem
+            problemclass = ProblemClass.objects.get(id=1)
+            # ToDo: ProblemClass should contain: trial
+            issue = Issue(url=parsed_url, problem_class=problemclass)
+            issue.save()
+            state = State.objects.get(id=1)
+            history = HistoryElement(operator="PrivacyScore Scanner",  state=state, issue=issue)
+            history.save()
+
     result['leaks'] = leaks
     return result
 
@@ -218,7 +246,7 @@ def _response_to_json(resp: Response) -> bytes:
     # we store only the top of the file because core dumps can become very large
     # also: we do not want to store more potentially sensitive data than necessary
     # to determine whether there is a leak or not
-    
+
     return json.dumps({
         'text': resp.content[0:50*1024].decode(errors='replace'),
         'status_code': resp.status_code,
