@@ -23,8 +23,10 @@ def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str
     potential_support_mails = ["test@f5w.de"]
     # potential_support_mails = mail_crawler.scan(parsed_url)
 
-    # Add results to raw_requests
-    raw_requests['potential_support_mails'] = potential_support_mails
+    raw_requests["mailcrawler"] = {
+        'mime_type': 'application/json',
+        'data': json.dumps(potential_support_mails),
+    }
 
     return raw_requests
 

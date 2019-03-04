@@ -370,4 +370,3 @@ def detect_cookies(domain, cookies, flashcookies, trackers):
         "third_party_track_domains": seen_trackers,
     }
     return rv
-
