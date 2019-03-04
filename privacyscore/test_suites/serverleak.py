@@ -216,26 +216,27 @@ def process_test_data(raw_data: list, previous_results: dict) -> Dict[str, Dict[
 
     # check for fixed problems:
     # leaks in previous_results but not in leaks any more
-    old_leaks = previous_results['leaks']
-    for old_leak in old_leaks:
-        if old_leak not in leaks:
-            # Leak from previous scan seems to be fixed.
-            # Time to close the issue.
+    if leaks in previous_results:
+        old_leaks = previous_results['leaks']
+        for old_leak in old_leaks:
+            if old_leak not in leaks:
+                # Leak from previous scan seems to be fixed.
+                # Time to close the issue.
 
-            # ToDo: identify the leak by its problem class and trial
-            issue.close()
+                # ToDo: identify the leak by its problem class and trial
+                issue.close()
 
-    for leak in leaks:
-        if leak not in old_leaks:
-            # new leak appeared. Time to create an issue.
-            # now it is time to create an issue for the ticketsystem
-            problemclass = ProblemClass.objects.get(id=1)
-            # ToDo: ProblemClass should contain: trial
-            issue = Issue(url=parsed_url, problem_class=problemclass)
-            issue.save()
-            state = State.objects.get(id=1)
-            history = HistoryElement(operator="PrivacyScore Scanner",  state=state, issue=issue)
-            history.save()
+        for leak in leaks:
+            if leak not in old_leaks:
+                # new leak appeared. Time to create an issue.
+                # now it is time to create an issue for the ticketsystem
+                problemclass = ProblemClass.objects.get(id=1)
+                # ToDo: ProblemClass should contain: trial
+                issue = Issue(url=parsed_url, problem_class=problemclass)
+                issue.save()
+                state = State.objects.get(id=1)
+                history = HistoryElement(operator="PrivacyScore Scanner",  state=state, issue=issue)
+                history.save()
 
     result['leaks'] = leaks
     return result
