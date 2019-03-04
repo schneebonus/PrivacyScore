@@ -216,7 +216,7 @@ def process_test_data(raw_data: list, previous_results: dict) -> Dict[str, Dict[
 
     # check for fixed problems:
     # leaks in previous_results but not in leaks any more
-    if leaks in previous_results:
+    if 'leaks' in previous_results:
         old_leaks = previous_results['leaks']
         for old_leak in old_leaks:
             if old_leak not in leaks:
