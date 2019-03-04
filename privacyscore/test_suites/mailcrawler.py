@@ -3,6 +3,7 @@ import json
 # import mail_crawler
 from typing import Dict, Union
 
+from urllib.parse import urlparse
 from ticketsystem.models import Address
 
 test_name = 'mailcrawler'
