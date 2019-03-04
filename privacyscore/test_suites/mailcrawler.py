@@ -30,9 +30,8 @@ def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str
 
 
 def process_test_data(raw_data: list, previous_results: dict, **options) -> Dict[str, Dict[str, object]]:
-    potential_support_mails = json.loads(raw_data['potential_support_mails'].decode())
+    potential_support_mails = raw_data['potential_support_mails']
 
-    # An example for a return value of the process function.
     return {
         'potential_support_mails': potential_support_mails,
     }
