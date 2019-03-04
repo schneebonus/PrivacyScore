@@ -20,7 +20,8 @@ def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str
     parsed_url = urlparse(url)
 
     # ToDo: call scanner here
-    potential_support_mails = mail_crawler.scan(parsed_url)
+    potential_support_mails = ["test@f5w.de"]
+    # potential_support_mails = mail_crawler.scan(parsed_url)
 
     # Add results to raw_requests
     raw_requests['potential_support_mails'] = potential_support_mails
@@ -30,10 +31,6 @@ def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str
 
 def process_test_data(raw_data: list, previous_results: dict, **options) -> Dict[str, Dict[str, object]]:
     potential_support_mails = json.loads(raw_data['potential_support_mails'].decode())
-
-    for email in potential_support_mails:
-        email = Address(address=email, url=url) # ToDo: emails should be linked to urls - not issues
-        email.save()
 
     # An example for a return value of the process function.
     return {
