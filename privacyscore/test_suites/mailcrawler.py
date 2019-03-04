@@ -26,7 +26,7 @@ def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str
 
     raw_requests["mailcrawler"] = {
         'mime_type': 'application/json',
-        'data': json.dumps(potential_support_mails),
+        'data': json.dumps(potential_support_mails).encode(),
     }
 
     return raw_requests
