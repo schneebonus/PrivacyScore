@@ -1,6 +1,6 @@
 
 import json
-import mail_crawler
+# import mail_crawler
 from typing import Dict, Union
 
 from ticketsystem.models import Address
@@ -32,6 +32,13 @@ def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str
 
 
 def process_test_data(raw_data: list, previous_results: dict, **options) -> Dict[str, Dict[str, object]]:
+    result = {"mailcrawler_finished": True}
+
+    if raw_data['jsonresult']['data'] == b'':
+        result['mx_has_ssl'] = False
+        return result
+
+
     potential_support_mails = raw_data['potential_support_mails']
 
     return {
