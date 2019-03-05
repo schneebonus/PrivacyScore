@@ -96,11 +96,6 @@ def open_issue_list_view(request):
     search = request.GET.get('search', "")
     issues = Issue.objects.all()
 
-    closed_history = HistoryElement.objects.all().filter(state.title="Fixed")
-    issues = set()
-    for h in closed_history:
-        issues.add(h.issue)
-
     search_results = []
     for issue in issues:
         state = issue.historyelement_set.all().order_by('-date').first().state.title
@@ -251,15 +246,12 @@ def email_view(request):
 def closed_issue_list_view(request):
     search = request.GET.get('search', "")
 
-    closed_history = HistoryElement.objects.all().filter(state.title="Fixed")
-    issues = set()
-    for h in closed_history:
-        issues.add(h.issue)
+    issues = Issue.objects.all()
 
     search_results = []
     for issue in issues:
         state = issue.historyelement_set.all().order_by('-date').first().state.title
-        if search in issue.url or search in issue.problem or search in state:
+        if (search in issue.url or search in issue.problem or search in state) and state == "Fixed":
             search_results.append(issue)
 
     context = {
