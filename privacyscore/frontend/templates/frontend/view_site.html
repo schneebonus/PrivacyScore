@@ -287,12 +287,9 @@ table.dataTable thead .sorting_desc_disabled
                                 <a role="button" data-toggle="collapse" data-parent="#accordion3" href="#collapse3_1" aria-expanded="true" aria-controls="collapse3_1" class="">
                                   <div class="row" style="display: flex; align-items: center;">
                                       <div class="col col-xs-1" style="text-align:center">
-                                          <i class="fa fa-3x fa-check-circle color-good"></i>
+                                          <i class="fa fa-3x fa-check-circle color-{{ issue.fixed|yesno:"good,bad,neutral" }}"></i>
                                       </div>
                                       <div class="col col-xs-10">
-                                            <span class="label pull-right label-info label-color-unreliable">
-                                                reliable
-                                            </span>
                                             <span class="pull-right">&nbsp;</span>
                                             <p><strong>Reported: {{ issue.problem_class }} ( {{ issue.fixed|yesno:"Fixed,Still existing,Unknown" }} )</strong></p>
                                             <div>
