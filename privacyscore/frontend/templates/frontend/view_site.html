@@ -273,6 +273,7 @@ table.dataTable thead .sorting_desc_disabled
 			</div>
 
 			<div class="col-sm-12">
+              {% if public_issues|length > 0 %}
                 <div class="spacer"></div>
                 <h3 class="jump-section" id="jump-section-disclosure">Disclosure: Reported Vulnerabilities</h3>
                 <!-- panel group begin -->
@@ -323,6 +324,7 @@ table.dataTable thead .sorting_desc_disabled
                       </div>
                 {% endfor %}
                 </div>
+                {% endif %}
 
                 {% for group, descriptions in groups_descriptions %}
                 {% with forloop.counter as outerCounter %}
