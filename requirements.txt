@@ -19,3 +19,4 @@ datetime
 pytz
 bleach
 selenium
+bs4
