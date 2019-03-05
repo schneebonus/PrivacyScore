@@ -403,14 +403,17 @@ def scan(url):
     global VERBOSE
     global check
 
-    check.init()
-    VERBOSE = False
-    loader.init()
-    loader.navigate_to_url(url)
-    status, done_urls, emails = crawl(url, 2, set())
-    results = emails
-    loader.cleanup()
-    return sorted(results)
+    try:
+        check.init()
+        VERBOSE = False
+        loader.init()
+        loader.navigate_to_url(url)
+        status, done_urls, emails = crawl(url, 2, set())
+        results = emails
+        loader.cleanup()
+        return sorted(results)
+    except:
+        loader.cleanup()
 
 if __name__ == "__main__":
     Main()
