@@ -96,10 +96,15 @@ def open_issue_list_view(request):
     search = request.GET.get('search', "")
     issues = Issue.objects.all()
 
+    closed_history = HistoryElement.objects.all().filter(state.title="Fixed")
+    issues = set()
+    for h in closed_history:
+        issues.add(h.issue)
+
     search_results = []
     for issue in issues:
         state = issue.historyelement_set.all().order_by('-date').first().state.title
-        if search in issue.url or search in issue.problem or search in state:
+        if (search in issue.url or search in issue.problem or search in state) and state != "Fixed":
             search_results.append(issue)
 
     context = {
@@ -244,7 +249,31 @@ def email_view(request):
 
 @login_required
 def closed_issue_list_view(request):
-    context = {'subsection': "Closed Issues"}
+    search = request.GET.get('search', "")
+
+    closed_history = HistoryElement.objects.all().filter(state.title="Fixed")
+    issues = set()
+    for h in closed_history:
+        issues.add(h.issue)
+
+    search_results = []
+    for issue in issues:
+        state = issue.historyelement_set.all().order_by('-date').first().state.title
+        if search in issue.url or search in issue.problem or search in state:
+            search_results.append(issue)
+
+    context = {
+        'subsection': "Closed Issues",
+        'issues': [
+            {'id': issue.id,
+            'url': issue.url,
+            'status': issue.historyelement_set.all().order_by('-date').first().state.title,
+            'problem': issue.problem,
+            'creation': issue.historyelement_set.all().order_by('-date').last().date,
+            'publication': issue.publication,
+            } for issue in search_results
+            ],
+        }
     return render(request, 'ticketsystem/issue_list_view.html', context)
 
 @login_required
