@@ -623,6 +623,7 @@ def scan_list_csv(request: HttpRequest, scan_list_id: int) -> HttpResponse:
 
 
 def site_result_json(request: HttpRequest, site_id: int) -> HttpResponse:
+    blacklisted_outputs = ["leaks", "support_mails"]
     if 'at' in request.GET:
         # Check that the site even exists
         site = get_object_or_404(Site, pk=site_id)
@@ -644,7 +645,8 @@ def site_result_json(request: HttpRequest, site_id: int) -> HttpResponse:
         scan_result = site.last_scan__result if site.last_scan__result else {}
     if 'raw' in request.GET:
         return JsonResponse(scan_result)
-    scan_result.pop('leaks', None)
+    for item in blacklisted_outputs:
+        scan_result.pop(item, None)
     code = json.dumps(scan_result, indent=2)
     if scan_result is not None:
         highlighted_code = mark_safe(
