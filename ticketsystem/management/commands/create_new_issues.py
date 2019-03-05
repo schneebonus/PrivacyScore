@@ -14,6 +14,7 @@ class Command(BaseCommand):
         for scan in all_scan_results:
             pk = scan.pk
             result = scan.result
+            url = result["final_url"]
             if "leaks" in result:
                 leaks = result["leaks"]
             else:
@@ -22,4 +23,16 @@ class Command(BaseCommand):
                 mails = result["support_mails"]
             else:
                 mails = []
-            print(pk, leaks, mails)
+            if len(leaks) > 0:
+                for leak in leaks:
+                    issue = Issue(url=url, problem=leak, scan_result=scan)
+                    issue.save()
+                    # set state
+                    state = State.objects.get(id=1)
+                    history = HistoryElement(operator="PrivacyScore Scanner",  state=state, issue=issue)
+                    history.save()
+                    # create email addresses
+                    for email in mails:
+                        e = Address(address=email, issue=issue)
+                        e.save()
+                print(pk, leaks, mails)

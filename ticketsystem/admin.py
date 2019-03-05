@@ -12,7 +12,6 @@ from .models import DailyNotificationSubscriber
 from .models import Attachment
 
 admin.site.register(State)
-admin.site.register(ProblemClass)
 
 admin.site.register(Issue)
 admin.site.register(HistoryElement)

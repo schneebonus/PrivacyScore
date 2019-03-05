@@ -3,6 +3,7 @@ from django import forms
 from datetime import datetime
 from enum import Enum
 from django.utils.timezone import now
+from privacyscore.backend.models import ScanResult
 import pytz
 # from datetime import datetime, timedelta
 
@@ -27,11 +28,12 @@ class ProblemClass(models.Model):
 class Issue(models.Model):
     url = models.CharField(max_length=100)
     problem = models.CharField(max_length=100, default="unknown")
+    scan_result = models.ForeignKey(ScanResult, on_delete=models.CASCADE)
     # problem_class = models.ForeignKey(ProblemClass, on_delete=models.CASCADE)
     publication = models.DateTimeField(blank=True, null=True)
     prevent_publication = models.BooleanField(default=False)
     def __str__(self):
-        return self.url + ":"+self.problem_class.title
+        return self.url + ":"+self.problem
 
 class Address(models.Model):
     address = models.CharField(max_length=100)
