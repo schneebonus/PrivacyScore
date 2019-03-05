@@ -5,8 +5,6 @@
 <div class="row">
     <div class="col-xs-12 col-md-3 flex-last pull-right text-right">
         <div class="text-left">
-          <input type="submit" value="Re-scan" class="btn btn-primary btn-block">
-          <input type="submit" value="Notify (again)" class="btn btn-primary btn-block">
           {% if prevent_publication %}
           <a href="{% url 'issue' %}?id={{ id }}&action=restart" class="btn btn-primary btn-block">Allow Publication</a>
           {% else %}
