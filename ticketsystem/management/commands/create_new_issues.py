@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
         for scan in all_scan_results:
             pk = scan.pk
-            result = json.load(scan.result)
+            result = scan.result
             if "leaks" in result:
                 leaks = result["leaks"]
             else:
