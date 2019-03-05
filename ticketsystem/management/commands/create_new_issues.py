@@ -7,6 +7,7 @@ from privacyscore.backend.models import ScanResult
 class Command(BaseCommand):
     help = 'Creates new issues from recent scan results'
 
-    all_scan_results = ScanResult.objects.all()
+    def handle(self, *args, **options):
+        all_scan_results = ScanResult.objects.all()
 
-    print(all_scan_results)
+        print(all_scan_results)
