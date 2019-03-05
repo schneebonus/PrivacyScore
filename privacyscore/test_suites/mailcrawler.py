@@ -1,6 +1,6 @@
 
 import json
-import crawler.SupportMailCrawler.smailcrawler as crawler
+import crawler.smailcrawler as crawler
 from typing import Dict, Union
 
 from urllib.parse import urlparse
