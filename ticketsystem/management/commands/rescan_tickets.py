@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = 'Rescans unfixed issues'
 
     def handle(self, *args, **options):
-        rescan_urls = {}
+        rescan_urls = set()
 
         issues = Issue.objects.all()
         for issue in issues:
