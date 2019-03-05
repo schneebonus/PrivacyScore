@@ -278,6 +278,7 @@ table.dataTable thead .sorting_desc_disabled
                 <!-- panel group begin -->
                 <div class="panel-group" id="accordion-disclosure"
                     role="tablist" aria-multiselectable="true">
+
                 {% for issue in public_issues %}
 
                 <div class="panel panel-default">
@@ -326,7 +327,6 @@ table.dataTable thead .sorting_desc_disabled
                       </div>
                 {% endfor %}
                 </div>
-              </div>
 
                 {% for group, descriptions in groups_descriptions %}
                 {% with forloop.counter as outerCounter %}
