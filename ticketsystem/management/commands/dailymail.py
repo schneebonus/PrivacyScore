@@ -26,8 +26,8 @@ class Command(BaseCommand):
 
     def next_publications(self):
         now = datetime.now(pytz.utc)
-        next_24_hours = timedelta(days=1)
-        notify_until = now + next_24_hours
+        next_7_days = timedelta(days=7)
+        notify_until = now + next_7_days
         next_publications = Issue.objects.all().filter(
             publication__gte=now).filter(publication__lte=notify_until)
         return next_publications
@@ -61,7 +61,7 @@ here is your daily privacyscore notification."""
             body += "\n\n"
         if len(next_publications) > 0:
             body += str(len(next_publications)) + \
-                " vulnerable result(s) will be published in the next 24 hours:\n"
+                " vulnerable result(s) will be published in the next 7 days:\n"
             for issue in next_publications:
                 body += "\t" + issue.problem_class.title + " on " + issue.url + "\n"
 
