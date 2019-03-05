@@ -293,9 +293,10 @@ table.dataTable thead .sorting_desc_disabled
                                                 reliable
                                             </span>
                                             <span class="pull-right">&nbsp;</span>
-                                            <p><strong>Reported: {{ issue.problemclass }} ( {{ issue.fixed }} )</strong></p>
+                                            <p><strong>Reported: {{ issue.problem_class }} ( {{ issue.fixed|yesno:"Fixed,Still existing,Unknown" }} )</strong></p>
                                             <div>
-                                                On {{ issue.known_since }} the PrivacyScore-Scanners found: {{ issue.problemclass }}
+                                                On {{ issue.known_since }} the PrivacyScore-Scanners found:<br>
+                                                {{ issue.problem_class }}
                                             </div>
                                       </div>
                                       <div class="col col-xs-1 text-center">
