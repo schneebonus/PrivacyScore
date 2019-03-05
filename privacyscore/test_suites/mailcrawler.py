@@ -4,7 +4,7 @@ import crawler.smailcrawler as crawler
 from typing import Dict, Union
 
 from urllib.parse import urlparse
-from ticketsystem.models import Address
+
 
 test_name = 'mailcrawler'
 test_dependencies = []
