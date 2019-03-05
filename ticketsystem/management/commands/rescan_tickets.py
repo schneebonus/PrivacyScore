@@ -16,5 +16,5 @@ class Command(BaseCommand):
                 rescan_urls.add(issue.url)
 
         for url in rescan_urls:
-            site = Site.objects.all().filter(url=url).latest('pk')
+            site = Site.objects.all().get(url=url)
             site.scan()
