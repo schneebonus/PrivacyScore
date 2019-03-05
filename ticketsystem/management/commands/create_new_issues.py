@@ -48,8 +48,8 @@ class Command(BaseCommand):
                         for email in mails:
                             e = Address(address=email, issue=issue)
                             e.save()
-                scan.issue_checked = True
-                scan.save()
+            scan.issue_checked = True
+            scan.save()
             # close fixed issues (if no longer found)
             issues = Issue.objects.all().filter(url=url)
             for issue in issues:
