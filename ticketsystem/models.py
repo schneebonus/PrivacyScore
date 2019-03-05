@@ -26,7 +26,8 @@ class ProblemClass(models.Model):
 
 class Issue(models.Model):
     url = models.CharField(max_length=100)
-    problem_class = models.ForeignKey(ProblemClass, on_delete=models.CASCADE)
+    problem = models.CharField(max_length=100)
+    # problem_class = models.ForeignKey(ProblemClass, on_delete=models.CASCADE)
     publication = models.DateTimeField(blank=True, null=True)
     prevent_publication = models.BooleanField(default=False)
     def __str__(self):
