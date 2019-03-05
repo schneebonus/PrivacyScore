@@ -14,7 +14,10 @@ class Command(BaseCommand):
         for scan in all_scan_results:
             pk = scan.pk
             result = scan.result
-            url = result["final_url"]
+            if "final_url" in result:
+                url = result["final_url"]
+            else:
+                url = ""
             if "leaks" in result:
                 leaks = result["leaks"]
             else:
@@ -23,7 +26,7 @@ class Command(BaseCommand):
                 mails = result["support_mails"]
             else:
                 mails = []
-            if len(leaks) > 0:
+            if len(leaks) > 0 and url != "":
                 for leak in leaks:
                     issue = Issue(url=url, problem=leak, scan_result=scan)
                     issue.save()
