@@ -291,9 +291,8 @@ table.dataTable thead .sorting_desc_disabled
                                       </div>
                                       <div class="col col-xs-10">
                                             <span class="pull-right">&nbsp;</span>
-                                            <p><strong>Reported: {{ issue.problem_class }} ( {{ issue.fixed|yesno:"Fixed,Still existing,Unknown" }} )</strong></p>
+                                            <p><strong>{{ issue.problem_class }} ( {{ issue.fixed|yesno:"Fixed,Still existing,Unknown" }} )</strong></p>
                                             <div>
-                                                On {{ issue.known_since }} the PrivacyScore-Scanners found:<br>
                                                 {{ issue.problem_class }}
                                             </div>
                                       </div>
@@ -311,7 +310,9 @@ table.dataTable thead .sorting_desc_disabled
                               </div>
                               <div class="col col-sm-11">
                                 <p>
-                                  This vulnerability has been published on {{ issue.published_since }}.
+                                  On {{ issue.known_since }} the PrivacyScore-Scanners found: {{ issue.problem_class }}<br>
+                                  This vulnerability has been published on {{ issue.published_since }}.<br>
+                                  The state of the vulnerability is: {{ issue.fixed|yesno:"Fixed,Still existing,Unknown" }}
                                 </p>
                                 <span class="pull-right">Result wrong?&nbsp;
                                     <a class="btn btn-default btn-sm" href="mailto:privacyscore.psi@uni-bamberg.de?subject=ERROR-REPORT&amp;body=I%20want%20to%20report%20an%20error%20about%20the%20following%20scan%20and%20check%3A%20http%3A//f5w.de/%20%5B2019-01-26%2000%3A52%3A55%5D%20-%20The%20site%20does%20not%20disclose%20internal%20system%20information%20at%20usual%20paths.">
