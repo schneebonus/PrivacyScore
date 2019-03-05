@@ -99,7 +99,7 @@ def open_issue_list_view(request):
     search_results = []
     for issue in issues:
         state = issue.historyelement_set.all().order_by('-date').first().state.title
-        if search in issue.url or search in issue.problem_class.title or search in state:
+        if search in issue.url or search in issue.problem or search in state:
             search_results.append(issue)
 
     context = {
@@ -108,7 +108,7 @@ def open_issue_list_view(request):
             {'id': issue.id,
             'url': issue.url,
             'status': issue.historyelement_set.all().order_by('-date').first().state.title,
-            'problem': issue.problem_class.title,
+            'problem': issue.problem,
             'creation': issue.historyelement_set.all().order_by('-date').last().date,
             'publication': issue.publication,
             } for issue in search_results
@@ -154,19 +154,19 @@ def issue_view(request):
     # ToDo: error handling in case no id given
     issue = Issue.objects.get(id=id)
     context = {
-        'subsection': issue.problem_class.title + " on " + issue.url,
+        'subsection': issue.problem + " on " + issue.url,
         'id': id,
         'url': issue.url,
         'publication_date': issue.publication,
         'prevent_publication': issue.prevent_publication,
         'status': history_elements.last().state.title,
-        'description': issue.problem_class.description,
+        'description': "",
         'emails': emails,
         'history': [
             {'date': element.date, 'description': element.state.title, 'comment': element.comment, 'operator': element.operator} for element in history_elements
             ],
         'more_issues_for_url': [
-            {'id': next_issue.id, 'problem_class': next_issue.problem_class.title} for next_issue in more_issues_for_url
+            {'id': next_issue.id, 'problem_class': next_issue.problem} for next_issue in more_issues_for_url
             ]
         }
     return render(request, 'ticketsystem/issue_detail_view.html', context)
@@ -183,7 +183,7 @@ def url_view(request):
             'id': issue.id,
             'url': issue.url,
             'status': issue.historyelement_set.all().order_by('-date').first().state.title,
-            'problem': issue.problem_class.title,
+            'problem': issue.problem,
             'creation': issue.historyelement_set.all().order_by('-date').last().date
             } for issue in issues
             ],
