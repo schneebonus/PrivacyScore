@@ -11,11 +11,6 @@ from requests.exceptions import ConnectionError
 from requests.models import Response
 from concurrent.futures import ThreadPoolExecutor
 
-from ticketsystem.models import Issue
-from ticketsystem.models import State
-from ticketsystem.models import HistoryElement
-
-
 test_name = 'serverleak'
 test_dependencies = []
 
