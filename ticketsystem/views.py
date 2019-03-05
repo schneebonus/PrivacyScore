@@ -283,11 +283,11 @@ def statistics_view(request):
         issue_urls.add(issue.url)
     total_issues = len(issues)
     total_urls = len(issue_urls)
-    mails = Address.objects.all()
+    mails = Mail.objects.all()
     total_mails = len(mails)
-    mails_outgoing = Address.objects.all().filter(direction=True)
+    mails_outgoing = Mail.objects.all().filter(direction=True)
     total_mails_outgoing = len(mails_outgoing)
-    mails_incoming = Address.objects.all().filter(direction=False)
+    mails_incoming = Mail.objects.all().filter(direction=False)
     total_mails_incoming = len(mails_incoming)
 
     context = {'subsection': "Statistics",
