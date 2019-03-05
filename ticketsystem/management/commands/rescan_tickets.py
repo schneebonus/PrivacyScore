@@ -12,7 +12,7 @@ class Command(BaseCommand):
 
         issues = Issue.objects.all()
         for issue in issues:
-            if issue.historyelement_set.all().last().title != "Fixed":
+            if issue.historyelement_set.all().last().state.title != "Fixed":
                 rescan_urls.add(issue.url)
 
         for url in rescan_urls:
