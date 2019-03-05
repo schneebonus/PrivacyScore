@@ -11,11 +11,8 @@ from requests.exceptions import ConnectionError
 from requests.models import Response
 from concurrent.futures import ThreadPoolExecutor
 
-
 test_name = 'serverleak'
-test_dependencies = [
-    'network', 'openwpm', 'testssl_https', 'testssl_mx',
-]
+test_dependencies = []
 
 USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0 (Research project: Visit PrivacyScore.org for details)'
 
