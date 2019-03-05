@@ -160,7 +160,7 @@ def issue_view(request):
         'publication_date': issue.publication,
         'prevent_publication': issue.prevent_publication,
         'status': history_elements.last().state.title,
-        'description': "",
+        'description': issue.problem,
         'emails': emails,
         'history': [
             {'date': element.date, 'description': element.state.title, 'comment': element.comment, 'operator': element.operator} for element in history_elements

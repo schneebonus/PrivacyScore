@@ -31,7 +31,9 @@ from privacyscore.flexcache import flexcache_view
 from privacyscore.frontend.forms import SingleSiteForm, CreateListForm
 from privacyscore.frontend.models import Spotlight
 from privacyscore.utils import normalize_url
-
+from datetime import datetime, timedelta
+from pytz import timezone
+import pytz
 from ticketsystem.models import Issue
 from ticketsystem.models import State
 from ticketsystem.models import HistoryElement
