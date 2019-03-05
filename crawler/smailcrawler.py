@@ -414,6 +414,7 @@ def scan(url):
         return sorted(results)
     except:
         loader.cleanup()
+        return []
 
 if __name__ == "__main__":
     Main()
