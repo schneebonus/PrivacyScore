@@ -535,7 +535,7 @@ class ScanResult(models.Model):
 
     result = postgres_fields.JSONField(null=True, blank=True)
 
-    issue_checked = models.BooleanField(default=True)
+    issue_checked = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return '{}'.format(str(self.scan))
