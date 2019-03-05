@@ -29,13 +29,12 @@ def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str
 def process_test_data(raw_data: list, previous_results: dict, **options) -> Dict[str, Dict[str, object]]:
     result = {"mailcrawler_finished": True}
 
-    if raw_data['jsonresult']['data'] == b'':
-        result['mx_has_ssl'] = False
+    if raw_data['mailcrawler']['data'] == b'':
+        result['has_mails'] = False
         return result
+    else:
+        potential_support_mails = json.loads(raw_data['mailcrawler']['data'].decode())
+        result['has_mails'] = True
+        result['support_mails'] = potential_support_mails
 
-
-    potential_support_mails = raw_data['potential_support_mails']
-
-    return {
-        'potential_support_mails': potential_support_mails,
-    }
+    return result
