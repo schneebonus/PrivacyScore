@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from ticketsystem.models import HistoryElement
 from ticketsystem.models import State
+import json
 from privacyscore.backend.models import Scan
 from privacyscore.backend.models import ScanResult
 
@@ -11,4 +12,14 @@ class Command(BaseCommand):
         all_scan_results = ScanResult.objects.all()
 
         for scan in all_scan_results:
-            print(scan.pk)
+            pk = scan.pk
+            result = json.load(scan.result)
+            if "leaks" in result:
+                leaks = result["leaks"]
+            else:
+                leaks = []
+            if "support_mails" in result:
+                mails = result["support_mails"]
+            else:
+                mails = []
+            print(pk, leaks, mails)
