@@ -536,7 +536,7 @@ def view_site(request: HttpRequest, site_id: int) -> HttpResponse:
 
     for issue in issues:
         # if ready for publication
-        if issue.publication < datetime.now() and issue.prevent_publication is False:
+        if issue.publication < datetime.now(pytz.utc) and issue.prevent_publication is False:
             known_since = issue.historyelement_set.all().first().date
             published_since = issue.publication
             problem_class = "Possible Informationleak: " + issue.problem
