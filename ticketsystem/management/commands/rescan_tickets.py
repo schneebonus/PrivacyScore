@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from ticketsystem.models import HistoryElement
 from ticketsystem.models import State
+from ticketsystem.models import Issue
+from privacyscore.backend.models import Site
 
 class Command(BaseCommand):
     help = 'Rescans unfixed issues'
