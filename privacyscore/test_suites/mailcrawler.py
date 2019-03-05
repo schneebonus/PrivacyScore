@@ -1,6 +1,6 @@
 
 import json
-# import mail_crawler
+import crawler.SupportMailCrawler.smailcrawler as crawler
 from typing import Dict, Union
 
 from urllib.parse import urlparse
@@ -13,10 +13,8 @@ test_dependencies = []
 def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str, Union[str, bytes]]]:
     # Calls the E-Mail Crawler and returns a list of emails
     result = {}
-    parsed_url = urlparse(url)
 
-    mails = ["test@f5w.de", "something@f5w.de"]
-    # mails = mail_crawler.scan(parsed_url)
+    mails = crawler.scan(url)
 
     result['mailcrawler'] = {
         'mime_type': 'application/json',
