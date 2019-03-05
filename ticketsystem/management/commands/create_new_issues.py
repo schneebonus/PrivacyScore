@@ -30,7 +30,8 @@ class Command(BaseCommand):
                 mails = []
             if len(leaks) > 0 and url != "":
                 for leak in leaks:
-                    issue = Issue(url=url, problem=leak, scan_result=scan)
+                    problem_name = "Möglichere Informationleak: " + leak + " wurde gefunden."
+                    issue = Issue(url=url, problem=problem_name, scan_result=scan)
                     issue.save()
                     # set state
                     state = State.objects.get(id=1)

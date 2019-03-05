@@ -14,7 +14,6 @@
             Please select one or more recipients (suggestions from the crawler):<br>
             {% for email in issue.possible_addresses %}
             <label><input type="checkbox" name="receiver" value="{{ email }}"> {{ email }}</label>
-            ( <a href="#">Source</a> )
             <br>
             {% endfor %}
             </p>
@@ -30,12 +29,11 @@
             <h3>Body</h3>
             <textarea rows="20" cols="80" name="content" form="usrform">
 Sehr geehrte Damen und Herren,
-während eines automatisierten Sicherheitsscans ist aufgefallen, dass Ihre Webseite {{ issue.all_issues_for_url|length }} Schwachstelle{{ issue.all_issues_for_url|pluralize:",n" }} aufweist.
+während eines automatisierten Sicherheitsscans ist aufgefallen, dass Ihre Webseite möglicherweise {{ issue.all_issues_for_url|length }} Schwachstelle{{ issue.all_issues_for_url|pluralize:",n" }} aufweist.
 Bitte leiten Sie diese E-Mail an Ihre IT-Abteilung, Ihre IT-Administration oder Ihr Sicherheitsmanagement weiter.
 
 {% for issue in issue.all_issues_for_url %}
-{{ issue.problem_class.title }}
-{{ issue.problem_class.email_body }}
+{{ issue.problem }}
 
 
 {% endfor %}
