@@ -20,3 +20,4 @@ pytz
 bleach
 selenium
 bs4
+lxml
