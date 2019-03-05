@@ -30,15 +30,21 @@ class Command(BaseCommand):
                 mails = []
             if len(leaks) > 0 and url != "":
                 for leak in leaks:
-                    problem_name = "Möglichere Informationleak: " + leak + " wurde gefunden."
-                    issue = Issue(url=url, problem=problem_name, scan_result=scan)
-                    issue.save()
-                    # set state
-                    state = State.objects.get(id=1)
-                    history = HistoryElement(operator="PrivacyScore Scanner",  state=state, issue=issue)
-                    history.save()
-                    # create email addresses
-                    for email in mails:
-                        e = Address(address=email, issue=issue)
-                        e.save()
+                    already_known = False
+                    previous_issues = Issue.objects.all().filter(url=url).filter(problem=leak)
+                    for issue in previous_issues:
+                        state = issue.historyelement_set.all().order_by('-date').first().state.title
+                        if state != "Fixed":
+                            already_known = True
+                    if already_known is False:
+                        issue = Issue(url=url, problem=leak, scan_result=scan)
+                        issue.save()
+                        # set state
+                        state = State.objects.get(id=1)
+                        history = HistoryElement(operator="PrivacyScore Scanner",  state=state, issue=issue)
+                        history.save()
+                        # create email addresses
+                        for email in mails:
+                            e = Address(address=email, issue=issue)
+                            e.save()
                 print(pk, leaks, mails)
