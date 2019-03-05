@@ -161,11 +161,11 @@ class ScanList(models.Model):
         for site in self.sites.all():
             if site.scan() == Site.SCAN_OK:
                 res = True
-        
+
         if self.editable:
             self.editable = False
             self.save(update_fields=('editable',))
-        
+
         return res
 
 
@@ -357,7 +357,7 @@ class Site(models.Model):
             self.last_scan__end_or_null = last_scan.end if last_scan else None
             self.last_scan__start = last_scan.start if last_scan else None
 
-        if ((self.last_scan and 
+        if ((self.last_scan and
                 now - self.last_scan.end < settings.SCAN_REQUIRED_TIME_BEFORE_NEXT_SCAN) or
                 (not self.last_scan__end_or_null and self.last_scan__start)):
             return Site.SCAN_COOLDOWN
@@ -534,6 +534,8 @@ class ScanResult(models.Model):
         Scan, on_delete=models.CASCADE, related_name='result')
 
     result = postgres_fields.JSONField(null=True, blank=True)
+
+    issue_checked = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return '{}'.format(str(self.scan))
