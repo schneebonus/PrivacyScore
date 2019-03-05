@@ -16,5 +16,6 @@ class Command(BaseCommand):
                 rescan_urls.add(issue.url)
 
         for url in rescan_urls:
-            site = Site.objects.all().get(url=url)
+            print("rescan of " + url)
+            site = Site.objects.get(url=url)
             site.scan()
