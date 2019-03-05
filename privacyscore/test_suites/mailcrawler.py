@@ -12,24 +12,18 @@ test_dependencies = []
 
 def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str, Union[str, bytes]]]:
     # Calls the E-Mail Crawler and returns a list of emails
-    raw_requests = {
-        'url': {
-            'mime_type': 'text/plain',
-            'data': url.encode(),
-        }
-    }
+    result = {}
     parsed_url = urlparse(url)
 
-    # ToDo: call scanner here
-    potential_support_mails = ["test@f5w.de"]
-    # potential_support_mails = mail_crawler.scan(parsed_url)
+    mails = ["test@f5w.de", "something@f5w.de"]
+    # mails = mail_crawler.scan(parsed_url)
 
-    raw_requests["mailcrawler"] = {
+    result['mailcrawler'] = {
         'mime_type': 'application/json',
-        'data': json.dumps(potential_support_mails).encode(),
+        'data': json.dumps(mails).encode(),
     }
 
-    return raw_requests
+    return result
 
 
 def process_test_data(raw_data: list, previous_results: dict, **options) -> Dict[str, Dict[str, object]]:
