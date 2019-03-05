@@ -11,7 +11,7 @@ class Command(BaseCommand):
     help = 'Creates new issues from recent scan results'
 
     def handle(self, *args, **options):
-        all_scan_results = ScanResult.objects.all()
+        all_scan_results = ScanResult.objects.all().filter(issue_checked=False)
 
         for scan in all_scan_results:
             pk = scan.pk
@@ -47,4 +47,6 @@ class Command(BaseCommand):
                         for email in mails:
                             e = Address(address=email, issue=issue)
                             e.save()
+                scan["issue_checked"] = True
+                scan.save()
                 print(pk, leaks, mails)
