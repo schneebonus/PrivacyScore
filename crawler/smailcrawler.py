@@ -22,10 +22,10 @@ import signal
 import sys
 import urllib.request
 import time
-from crawler.SupportMailCrawler.parsers.RegexParser import RegexParser
-from crawler.SupportMailCrawler.parsers.MailtoParser import MailtoParser
-from crawler.SupportMailCrawler.loaders.SeleniumChromeLoader import SeleniumChromeLoader
-from crawler.SupportMailCrawler.utils.TLDCheck import TLDCheck
+from crawler.parsers.RegexParser import RegexParser
+from crawler.parsers.MailtoParser import MailtoParser
+from crawler.loaders.SeleniumChromeLoader import SeleniumChromeLoader
+from crawler.utils.TLDCheck import TLDCheck
 # Typical sites that contain email addresses.
 # Everything is lowercase.
 potential_sites_en = [
