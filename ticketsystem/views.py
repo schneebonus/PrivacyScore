@@ -270,7 +270,35 @@ def closed_issue_list_view(request):
 
 @login_required
 def statistics_view(request):
-    context = {'subsection': "Statistics"}
+    issues = Issue.objects.all()
+    total_open_issues = 0
+    total_closed_issues = 0
+    issue_urls = set()
+    for issue in issues:
+        state = issue.historyelement_set.all().order_by('-date').first().state.title
+        if state == "Fixed":
+            total_closed_issues += 1
+        else:
+            total_open_issues += 1
+        issue_urls.add(issue.url)
+    total_issues = len(issues)
+    total_urls = len(issue_urls)
+    mails = Address.objects.all()
+    total_mails = len(mails)
+    mails_outgoing = Address.objects.all().filter(direction=True)
+    total_mails_outgoing = len(mails_outgoing)
+    mails_incoming = Address.objects.all().filter(direction=False)
+    total_mails_incoming = len(mails_incoming)
+
+    context = {'subsection': "Statistics",
+        'total_open_issues': total_open_issues,
+        'total_closed_issues': total_closed_issues,
+        'total_issues': total_issues,
+        'total_urls': total_urls,
+        'total_mails': total_mails,
+        'total_mails_outgoing': total_mails_outgoing,
+        'total_mails_incoming': total_mails_incoming,
+        }
     return render(request, 'ticketsystem/statistics.html', context)
 
 @login_required

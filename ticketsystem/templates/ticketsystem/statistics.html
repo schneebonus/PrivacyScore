@@ -1,9 +1,13 @@
 {% extends 'ticketsystem/layout.html' %}
 
 {% block content %}
-m offen<br>
-n geschlossen<br>
-durchschnittlich x Zeiteinheiten offen<br>
-...
+
+{{ total_issues }} Issues<br>
+{{ total_open_issues }} open issues<br>
+{{ total_closed_issues }} closed issues<br>
+{{ total_urls }} different URLs in issues<br>
+{{ total_mails }} e-mails<br>
+{{ total_mails_outgoing }} outgoing e-mails<br>
+{{ total_mails_incoming }} incoming e-mails<br>
 
 {% endblock %}
