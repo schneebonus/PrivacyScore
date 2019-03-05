@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from ticketsystem.models import HistoryElement
 from ticketsystem.models import State
+from ticketsystem.models import Issue
+from ticketsystem.models import Address
 import json
 from privacyscore.backend.models import Scan
 from privacyscore.backend.models import ScanResult
