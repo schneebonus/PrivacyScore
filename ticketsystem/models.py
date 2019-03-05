@@ -28,7 +28,7 @@ class ProblemClass(models.Model):
 class Issue(models.Model):
     url = models.CharField(max_length=100)
     problem = models.CharField(max_length=100, default="unknown")
-    scan_result = models.ForeignKey(ScanResult, on_delete=models.CASCADE)
+    scan_result = models.ForeignKey(ScanResult, on_delete=models.CASCADE, default=0)
     # problem_class = models.ForeignKey(ProblemClass, on_delete=models.CASCADE)
     publication = models.DateTimeField(blank=True, null=True)
     prevent_publication = models.BooleanField(default=False)
