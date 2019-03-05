@@ -28,6 +28,7 @@ class Command(BaseCommand):
                 mails = result["support_mails"]
             else:
                 mails = []
+            # create new leaks (if not known already)
             if len(leaks) > 0 and url != "":
                 for leak in leaks:
                     already_known = False
@@ -49,4 +50,13 @@ class Command(BaseCommand):
                             e.save()
                 scan.issue_checked = True
                 scan.save()
-                print(pk, leaks, mails)
+            # close fixed issues (if no longer found)
+            issues = Issue.objects.all().filter(url=url)
+            for issue in issues:
+                problem = issue.problem
+                if problem not in leaks:
+                    # could not find the problem
+                    # seems to be fixed and the issue can get state=closed / fixed
+                    state = State.objects.get(title="Fixed")
+                    history = HistoryElement(operator="PrivacyScore Scanner",  state=state, issue=issue)
+                    history.save()
