@@ -47,6 +47,6 @@ class Command(BaseCommand):
                         for email in mails:
                             e = Address(address=email, issue=issue)
                             e.save()
-                scan["issue_checked"] = True
+                scan.issue_checked = True
                 scan.save()
                 print(pk, leaks, mails)
