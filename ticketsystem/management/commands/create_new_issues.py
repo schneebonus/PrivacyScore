@@ -10,4 +10,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         all_scan_results = ScanResult.objects.all()
 
-        print(all_scan_results)
+        for scan in all_scan_results:
+            print(scan.pk)
