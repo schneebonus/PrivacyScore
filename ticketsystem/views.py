@@ -51,7 +51,7 @@ def dashboard(request):
         'notifications': [
             {'id': issue.id,
             'url': issue.url,
-            'problemclass': issue.problem_class,
+            'problemclass': issue.problem,
             'date': issue.historyelement_set.all().first().date} for issue in new_issues
             ]
     }
