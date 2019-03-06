@@ -28,6 +28,14 @@ class Command(BaseCommand):
                 sites_http[0].scan()
             elif len(sites_https) is not 0:
                 sites_https[0].scan()
+            elif cleaned_url.startswith("www."):
+                without_www = cleaned_url.replace("www.", "")
+                sites_http_no_www = Site.objects.filter(url="http://" + without_www + "/")
+                sites_https_no_www = Site.objects.filter(url="https://" + without_www + "/")
+                if len(sites_http_no_www) is not 0:
+                    sites_http_no_www[0].scan()
+                elif len(sites_https_no_www) is not 0:
+                    sites_https_no_www[0].scan()
             else:
                 print("Error: Could not find site for URL!")
 
