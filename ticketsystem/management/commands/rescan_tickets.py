@@ -22,8 +22,8 @@ class Command(BaseCommand):
             cleaned_url = self.clean_url(url)
             print(cleaned_url)
 
-            sites_http = Site.objects.filter(url="http://" + cleaned_url)
-            sites_https = Site.objects.filter(url="https://" + cleaned_url)
+            sites_http = Site.objects.filter(url="http://" + cleaned_url + "/")
+            sites_https = Site.objects.filter(url="https://" + cleaned_url + "/")
             if len(sites_http) is not 0:
                 sites_http[0].scan()
             elif len(sites_https) is not 0:
@@ -32,6 +32,6 @@ class Command(BaseCommand):
                 print("Error: Could not find site for URL!")
 
     def clean_url(self, url):
-        regex = "^https?:\/\/(.*)\/(.*)$"
+        regex = "^https?:\/\/(.*)(\/.*)$"
         searchObj = re.search( regex, url)
         return searchObj.group(1)
