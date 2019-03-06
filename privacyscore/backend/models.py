@@ -533,7 +533,7 @@ class ScanResult(models.Model):
     scan = models.OneToOneField(
         Scan, on_delete=models.CASCADE, related_name='result')
 
-    issue_checked = models.BooleanField(default=False)
+    issue_checked = models.BooleanField(default=False, blank=True, null=True)
 
     result = postgres_fields.JSONField(null=True, blank=True)
 

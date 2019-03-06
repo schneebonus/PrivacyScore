@@ -14,8 +14,6 @@ def test_site(url: str, previous_results: dict, **options) -> Dict[str, Dict[str
     # Calls the E-Mail Crawler and returns a list of emails
     result = {}
 
-    print("Mail Crawler for " + url)
-
     # mails = crawler.scan(url)
     mails = ["a@b.de"]
 
