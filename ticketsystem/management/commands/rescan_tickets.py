@@ -31,6 +31,6 @@ class Command(BaseCommand):
                 print("Error: Could not find site for URL!")
 
     def clean_url(self, url):
-        regex = "^https?:\/\/(.*)(\/.*)$"
+        regex = "^https?:\/\/(.*)\/(.*)$"
         searchObj = re.search( regex, url)
         return searchObj.group(1)
