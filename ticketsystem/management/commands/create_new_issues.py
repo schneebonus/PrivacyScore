@@ -53,8 +53,9 @@ class Command(BaseCommand):
             # close fixed issues (if no longer found)
             issues = Issue.objects.all().filter(url=url)
             for issue in issues:
+                state = issue.historyelement_set.all().order_by('-date').first().state.title
                 problem = issue.problem
-                if problem not in leaks:
+                if problem not in leaks and state != "Fixed":
                     # could not find the problem
                     # seems to be fixed and the issue can get state=closed / fixed
                     state = State.objects.get(title="Fixed")

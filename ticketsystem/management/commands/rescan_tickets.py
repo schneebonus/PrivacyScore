@@ -20,7 +20,6 @@ class Command(BaseCommand):
             print("rescan of " + url)
 
             cleaned_url = self.clean_url(url)
-            print(cleaned_url)
 
             sites_http = Site.objects.filter(url="http://" + cleaned_url + "/")
             sites_https = Site.objects.filter(url="https://" + cleaned_url + "/")
