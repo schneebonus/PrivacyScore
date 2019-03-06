@@ -22,8 +22,8 @@ class Command(BaseCommand):
             cleaned_url = self.clean_url(url)
 
             sites_http = Site.objects.filter(url="http://" + cleaned_url)
-            print(sites_http, sites_https)
             sites_https = Site.objects.filter(url="https://" + cleaned_url)
+            print(sites_http, sites_https)
             if len(sites_http) is not 0:
                 sites_http[0].scan()
             elif len(sites_https) is not 0:
