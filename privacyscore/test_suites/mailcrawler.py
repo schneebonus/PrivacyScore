@@ -1,4 +1,3 @@
-
 import json
 import crawler.smailcrawler as crawler
 from typing import Dict, Union
