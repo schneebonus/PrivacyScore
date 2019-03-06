@@ -3,6 +3,7 @@ from ticketsystem.models import HistoryElement
 from ticketsystem.models import State
 from ticketsystem.models import Issue
 from privacyscore.backend.models import Site
+import re
 
 class Command(BaseCommand):
     help = 'Rescans unfixed issues'
