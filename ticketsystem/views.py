@@ -416,7 +416,7 @@ def notification_view(request):
     issue = Issue.objects.get(id=id)
     all_issues_for_url = Issue.objects.filter(url=issue.url)
     open_issues_for_url = set()
-    for issue in all_issues_for_url
+    for issue in all_issues_for_url:
         state = issue.historyelement_set.all().order_by('-date').first().state.title
         if state != "Fixed":
             open_issues_for_url.add(issue)
