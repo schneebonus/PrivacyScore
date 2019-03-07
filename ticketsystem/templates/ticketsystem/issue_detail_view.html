@@ -5,6 +5,7 @@
 <div class="row">
     <div class="col-xs-12 col-md-3 flex-last pull-right text-right">
         <div class="text-left">
+          <a href="{% url 'notification' %}?id={{ id }}" class="btn btn-primary btn-block">Send notification</a>
           {% if prevent_publication %}
           <a href="{% url 'issue' %}?id={{ id }}&action=restart" class="btn btn-primary btn-block">Allow Publication</a>
           {% else %}
