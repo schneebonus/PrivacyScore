@@ -18,9 +18,6 @@ class Command(BaseCommand):
 
         for url in rescan_urls:
             print("rescan of " + url)
-
-            url.scan()
-
             sites = Site.objects.filter(url=url)
             if len(sites) > 0:
                 sites[0].scan()
