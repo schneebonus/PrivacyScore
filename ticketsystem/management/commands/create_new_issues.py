@@ -16,10 +16,7 @@ class Command(BaseCommand):
         for scan in all_scan_results:
             pk = scan.pk
             result = scan.result
-            if "final_url" in result:
-                url = result["final_url"]
-            else:
-                url = ""
+            url = scan.site.url
             if "leaks" in result:
                 leaks = result["leaks"]
             else:

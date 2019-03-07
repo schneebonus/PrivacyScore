@@ -19,26 +19,8 @@ class Command(BaseCommand):
         for url in rescan_urls:
             print("rescan of " + url)
 
-            cleaned_url = self.clean_url(url)
+            url.scan()
 
-            sites_http = Site.objects.filter(url="http://" + cleaned_url + "/")
-            sites_https = Site.objects.filter(url="https://" + cleaned_url + "/")
-            if len(sites_http) is not 0:
-                sites_http[0].scan()
-            elif len(sites_https) is not 0:
-                sites_https[0].scan()
-            elif cleaned_url.startswith("www."):
-                without_www = cleaned_url.replace("www.", "")
-                sites_http_no_www = Site.objects.filter(url="http://" + without_www + "/")
-                sites_https_no_www = Site.objects.filter(url="https://" + without_www + "/")
-                if len(sites_http_no_www) is not 0:
-                    sites_http_no_www[0].scan()
-                elif len(sites_https_no_www) is not 0:
-                    sites_https_no_www[0].scan()
-            else:
-                print("Error: Could not find site for URL!")
-
-    def clean_url(self, url):
-        regex = "^https?:\/\/(.*)(\/.*)$"
-        searchObj = re.search( regex, url)
-        return searchObj.group(1)
+            sites = Site.objects.filter(url=url)
+            if len(sites) > 0:
+                sites[0].scan()
