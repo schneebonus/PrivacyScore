@@ -415,6 +415,12 @@ def notification_view(request):
 
     issue = Issue.objects.get(id=id)
     all_issues_for_url = Issue.objects.filter(url=issue.url)
+    open_issues_for_url = set()
+    for issue in all_issues_for_url
+        state = issue.historyelement_set.all().order_by('-date').first().state.title
+        if state != "Fixed":
+            open_issues_for_url.add(issue)
+
     addresses = set()
     for i in all_issues_for_url:
         addresses_of_issue = Address.objects.filter(issue=i)
@@ -427,7 +433,7 @@ def notification_view(request):
             'id': issue.id,
             'url': issue.url,
             'possible_addresses': {a.address for a in addresses},
-            'all_issues_for_url': all_issues_for_url,
+            'all_issues_for_url': open_issues_for_url,
             }
         }
     return render(request, 'ticketsystem/issue_notification_form.html', context)
