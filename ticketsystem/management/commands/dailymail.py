@@ -38,6 +38,12 @@ class Command(BaseCommand):
         subscribers = [
             sub.address for sub in DailyNotificationSubscriber.objects.all()]
 
+        all_issues = Issue.objects.all()
+        new_issues = []
+        for issue in all_issues:
+            if len(issue.historyelement_set.all()) is 1:
+                new_issues.append(issue)
+
         fromaddr = settings.EMAIL_USERNAME
 
         msg = MIMEMultipart()
@@ -64,8 +70,13 @@ here is your daily privacyscore notification."""
                 " vulnerable result(s) will be published in the next 7 days:\n"
             for issue in next_publications:
                 body += "\t" + issue.problem_class.title + " on " + issue.url + "\n"
+            body += "\n\n"
+        if len(new_issues) > 0:
+            body += str(len(new_issues)) + \
+                " issues have been created and are ready for a notification."
+            body += "\n\n"
 
-        if len(pending_emails) == 0 and len(next_publications) == 0:
+        if len(pending_emails) == 0 and len(next_publications) == 0 and len(new_issues) == 0:
             print("DailyMail not required (nothing to do)")
         else:
             body += "\nSo long and thanks for all the fish,\n\nDaily Notification Cronjob"

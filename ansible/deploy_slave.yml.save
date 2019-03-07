@@ -135,8 +135,10 @@
         src: https://chromedriver.storage.googleapis.com/73.0.3683.20/chromedriver_linux64.zip
         dest: /usr/bin/
         remote_src: yes
-    - file:
-        path: /usr/bin/chromedriver
-        owner: root
-        group: root
         mode: 0755
+    - file:
+        path: /etc/foo.conf
+        owner: foo
+    group: foo
+    # when specifying mode using octal numbers, add a leading 0
+    mode: 0644

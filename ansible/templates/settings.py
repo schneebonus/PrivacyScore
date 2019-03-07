@@ -20,13 +20,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '{{ lookup('passwordstore', 'privacyscore.org/settings/SECRET_KEY') }}'
+SECRET_KEY = 'just a development key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
 ALLOWED_HOSTS = [
     'privacyscore.org',
+    'ps.f5w.de',
 ]
 
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'widget_tweaks',
+    'ticketsystem',
 ]
 
 MIDDLEWARE = [
