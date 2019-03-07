@@ -428,7 +428,7 @@ def notification_view(request):
             addresses.add(a)
 
     context = {
-        'subsection': "Notification",
+        'subsection': "Notification for " + issue.url,
         'issue': {
             'id': issue.id,
             'url': issue.url,
