@@ -74,6 +74,8 @@ here is your daily privacyscore notification."""
         if len(new_issues) > 0:
             body += str(len(new_issues)) + \
                 " issues have been created and are ready for a notification."
+            for issue in new_issues:
+                body += "\n\t" + issue.problem + " on " + issue.url
             body += "\n\n"
 
         if len(pending_emails) == 0 and len(next_publications) == 0 and len(new_issues) == 0:
