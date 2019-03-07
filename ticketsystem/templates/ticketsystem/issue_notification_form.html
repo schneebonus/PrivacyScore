@@ -33,8 +33,7 @@ während eines automatisierten Sicherheitsscans ist aufgefallen, dass Ihre Webse
 Bitte leiten Sie diese E-Mail an Ihre IT-Abteilung, Ihre IT-Administration oder Ihr Sicherheitsmanagement weiter.
 
 {% for issue in issue.all_issues_for_url %}
-{{ issue.problem }}
-
+Auf ihrer Webseite wurde die Datei "{{ issue.problem }}" gefunden. In der Regel werden dadurch Informationen geteilt, die nicht veröffentlicht werden sollten.
 
 {% endfor %}
 
