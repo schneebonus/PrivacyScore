@@ -531,7 +531,7 @@ def view_site(request: HttpRequest, site_id: int) -> HttpResponse:
     res['https_error'] = results.get('https_error')
 
     # get data from ticketsystem
-    issues = Issue.objects.all().filter(url=res['final_url'])
+    issues = Issue.objects.all().filter(url=site.url)
     public_issues = []
 
     for issue in issues:
