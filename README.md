@@ -1,4 +1,4 @@
-PrivacyScore
+PrivacyScore - Fork for the disclosure system
 ============
 
 PrivacyScore is a platform for investigating security and privacy issues on websites. It is inspired by tools like the [Qualys SSL test](https://www.ssllabs.com/ssltest/) and [Webbkoll](https://github.com/andersju/webbkoll), but aims to be more comprehensive and offer additional features like
